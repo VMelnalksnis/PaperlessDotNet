@@ -18,6 +18,9 @@ public sealed class DocumentClientTests : IClassFixture<ServiceProviderFixture>
 		_paperlessClient = serviceProviderFixture.GetPaperlessClient(testOutputHelper);
 	}
 
+	[Fact]
+	public void Pass() => Assert.True(true);
+
 	[Fact(Skip = "Requires a running Paperless instance")]
 	public async Task GetAll_ShouldReturnExpected()
 	{

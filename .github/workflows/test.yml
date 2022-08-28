@@ -37,6 +37,9 @@ jobs:
           -p:CoverletOutputFormat=opencover
           --configuration Release
           --no-build
+        env:
+          Paperless__BaseAddress: 'https://localhost:5002/'
+          Paperless__Token: 'token'
 
       - name: ReSharper annotations
         uses: VMelnalksnis/resharper-inspect-action@v0.2.3
