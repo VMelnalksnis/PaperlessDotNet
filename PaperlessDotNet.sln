@@ -10,6 +10,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		global.json = global.json
 		nuget.config = nuget.config
 		README.md = README.md
+		version = version
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VMelnalksnis.PaperlessDotNet", "source\VMelnalksnis.PaperlessDotNet\VMelnalksnis.PaperlessDotNet.csproj", "{7A711A96-8B58-405D-BC8A-534AEDB68C23}"
@@ -25,6 +26,18 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VMelnalksnis.PaperlessDotNet.DependencyInjection.Tests", "tests\VMelnalksnis.PaperlessDotNet.DependencyInjection.Tests\VMelnalksnis.PaperlessDotNet.DependencyInjection.Tests.csproj", "{673ED450-F817-4B4D-9146-3B70EDDD0671}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VMelnalksnis.PaperlessDotNet.Tests.Integration", "tests\VMelnalksnis.PaperlessDotNet.Tests.Integration\VMelnalksnis.PaperlessDotNet.Tests.Integration.csproj", "{75D35888-F907-4D5C-963C-99028CB6A191}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{FDEC71BD-C2CB-41A6-9F1C-1B54B8CB159C}"
+	ProjectSection(SolutionItems) = preProject
+		.github\dependabot.yml = .github\dependabot.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{079B16F6-8E3D-43BA-9D64-9CE270D2502A}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\nuget-vulnerabilities.yml = .github\workflows\nuget-vulnerabilities.yml
+		.github\workflows\release.yml = .github\workflows\release.yml
+		.github\workflows\test.yml = .github\workflows\test.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -52,5 +65,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{673ED450-F817-4B4D-9146-3B70EDDD0671} = {06D4E306-A392-4FA1-9D69-E3B59348330F}
 		{75D35888-F907-4D5C-963C-99028CB6A191} = {06D4E306-A392-4FA1-9D69-E3B59348330F}
+		{FDEC71BD-C2CB-41A6-9F1C-1B54B8CB159C} = {320F278C-1E81-42F5-9D87-FC1CBCF49B99}
+		{079B16F6-8E3D-43BA-9D64-9CE270D2502A} = {FDEC71BD-C2CB-41A6-9F1C-1B54B8CB159C}
 	EndGlobalSection
 EndGlobal
