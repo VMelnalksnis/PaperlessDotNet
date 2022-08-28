@@ -1,0 +1,37 @@
+{
+	"$schema": "https://raw.githubusercontent.com/DotNetAnalyzers/StyleCopAnalyzers/master/StyleCop.Analyzers/StyleCop.Analyzers/Settings/stylecop.schema.json",
+	"settings": {
+		"documentationRules": {
+			"companyName": "Valters Melnalksnis",
+			"copyrightText": "Copyright 2022 {companyName}\r\nLicensed under the {licenseName}.\r\nSee {licenseFile} file in the project root for full license information.",
+			"variables": {
+				"licenseName": "Apache License 2.0",
+				"licenseFile": "LICENSE"
+			},
+			"excludeFromPunctuationCheck": [],
+			"xmlHeader": false,
+			"documentationCulture": "en-US",
+			"documentExposedElements": true,
+			"documentInterfaces": true,
+			"documentInternalElements": true,
+			"documentPrivateElements": false,
+			"documentPrivateFields": false,
+			"fileNamingConvention": "stylecop",
+			"headerDecoration": ""
+		},
+		"indentation": {
+			"indentationSize": 4,
+			"tabSize": 4,
+			"useTabs": true
+		},
+		"layoutRules": {
+			"allowConsecutiveUsings": true,
+			"newlineAtEndOfFile": "require"
+		},
+		"orderingRules": {
+			"systemUsingDirectivesFirst": true,
+			"usingDirectivesPlacement": "outsideNamespace",
+			"blankLinesBetweenUsingGroups": "require"
+		}
+	}
+}

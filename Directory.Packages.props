@@ -1,0 +1,17 @@
+<Project>
+	<ItemGroup>
+		<PackageVersion Include="DotNet.ReproducibleBuilds" Version="1.1.1">
+			<PrivateAssets>all</PrivateAssets>
+		</PackageVersion>
+		<PackageVersion Include="DotNet.ReproducibleBuilds.Isolated" Version="1.1.1">
+			<PrivateAssets>all</PrivateAssets>
+		</PackageVersion>
+		<PackageVersion Include="Jetbrains.Annotations" Version="2022.1.0">
+			<PrivateAssets>all</PrivateAssets>
+		</PackageVersion>
+		<PackageVersion Include="StyleCop.Analyzers" Version="1.2.0-beta.435">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageVersion>
+	</ItemGroup>
+</Project>

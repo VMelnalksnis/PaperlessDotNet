@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<Product>VMelnalksnis.PaperlessDotNet</Product>
+		<ProductId>VMelnalksnis.PaperlessDotNet</ProductId>
+		<Description>.NET Paperless API client</Description>
+		<PackageTags>paperless</PackageTags>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		
+		<IsPackable>true</IsPackable>
+		<IncludeSymbols>true</IncludeSymbols>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+
+		<SignAssembly>true</SignAssembly>
+		<AssemblyOriginatorKeyFile>key.snk</AssemblyOriginatorKeyFile>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Include="..\..\README.md" Pack="true" PackagePath="\"/>
+	</ItemGroup>
+</Project>
