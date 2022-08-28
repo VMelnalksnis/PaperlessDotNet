@@ -1,0 +1,56 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{320F278C-1E81-42F5-9D87-FC1CBCF49B99}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		.gitignore = .gitignore
+		LICENSE = LICENSE
+		Directory.Build.props = Directory.Build.props
+		Directory.Packages.props = Directory.Packages.props
+		global.json = global.json
+		nuget.config = nuget.config
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VMelnalksnis.PaperlessDotNet", "source\VMelnalksnis.PaperlessDotNet\VMelnalksnis.PaperlessDotNet.csproj", "{7A711A96-8B58-405D-BC8A-534AEDB68C23}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VMelnalksnis.PaperlessDotNet.DependencyInjection", "source\VMelnalksnis.PaperlessDotNet.DependencyInjection\VMelnalksnis.PaperlessDotNet.DependencyInjection.csproj", "{7D7879FB-9384-4DC4-BECF-41ECC9C11211}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{06D4E306-A392-4FA1-9D69-E3B59348330F}"
+	ProjectSection(SolutionItems) = preProject
+		tests\.editorconfig = tests\.editorconfig
+		tests\Directory.Build.props = tests\Directory.Build.props
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VMelnalksnis.PaperlessDotNet.DependencyInjection.Tests", "tests\VMelnalksnis.PaperlessDotNet.DependencyInjection.Tests\VMelnalksnis.PaperlessDotNet.DependencyInjection.Tests.csproj", "{673ED450-F817-4B4D-9146-3B70EDDD0671}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VMelnalksnis.PaperlessDotNet.Tests.Integration", "tests\VMelnalksnis.PaperlessDotNet.Tests.Integration\VMelnalksnis.PaperlessDotNet.Tests.Integration.csproj", "{75D35888-F907-4D5C-963C-99028CB6A191}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7A711A96-8B58-405D-BC8A-534AEDB68C23}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A711A96-8B58-405D-BC8A-534AEDB68C23}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7A711A96-8B58-405D-BC8A-534AEDB68C23}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A711A96-8B58-405D-BC8A-534AEDB68C23}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7D7879FB-9384-4DC4-BECF-41ECC9C11211}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7D7879FB-9384-4DC4-BECF-41ECC9C11211}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7D7879FB-9384-4DC4-BECF-41ECC9C11211}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7D7879FB-9384-4DC4-BECF-41ECC9C11211}.Release|Any CPU.Build.0 = Release|Any CPU
+		{673ED450-F817-4B4D-9146-3B70EDDD0671}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{673ED450-F817-4B4D-9146-3B70EDDD0671}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{673ED450-F817-4B4D-9146-3B70EDDD0671}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{673ED450-F817-4B4D-9146-3B70EDDD0671}.Release|Any CPU.Build.0 = Release|Any CPU
+		{75D35888-F907-4D5C-963C-99028CB6A191}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{75D35888-F907-4D5C-963C-99028CB6A191}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{75D35888-F907-4D5C-963C-99028CB6A191}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{75D35888-F907-4D5C-963C-99028CB6A191}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{673ED450-F817-4B4D-9146-3B70EDDD0671} = {06D4E306-A392-4FA1-9D69-E3B59348330F}
+		{75D35888-F907-4D5C-963C-99028CB6A191} = {06D4E306-A392-4FA1-9D69-E3B59348330F}
+	EndGlobalSection
+EndGlobal

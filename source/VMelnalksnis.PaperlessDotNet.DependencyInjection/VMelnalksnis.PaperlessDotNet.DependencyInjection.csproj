@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<Product>VMelnalksnis.PaperlessDotNet.DependencyInjection</Product>
+		<ProductId>VMelnalksnis.PaperlessDotNet.DependencyInjection</ProductId>
+		<Description>Dependency injection configuration for VMelnalksnis.PaperlessDotNet</Description>
+		<PackageTags>paperless</PackageTags>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+
+		<IsPackable>true</IsPackable>
+		<IncludeSymbols>true</IncludeSymbols>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+
+		<SignAssembly>true</SignAssembly>
+		<AssemblyOriginatorKeyFile>key.snk</AssemblyOriginatorKeyFile>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\VMelnalksnis.PaperlessDotNet\VMelnalksnis.PaperlessDotNet.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+		<PackageReference Include="Microsoft.Extensions.Http" />
+		<PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
+		<PackageReference Include="Microsoft.Extensions.Options.DataAnnotations" />
+	</ItemGroup>
+
+</Project>

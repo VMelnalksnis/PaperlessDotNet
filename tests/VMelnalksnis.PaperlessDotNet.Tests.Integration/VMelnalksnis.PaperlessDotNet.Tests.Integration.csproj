@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+	  <UserSecretsId>20e7c251-0bc2-4764-b533-448d014f1212</UserSecretsId>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="NodaTime.Testing" />
+		<PackageReference Include="Serilog" />
+		<PackageReference Include="Serilog.AspNetCore" />
+		<PackageReference Include="Serilog.Sinks.XUnit" />
+		<PackageReference Include="System.Linq.Async" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\source\VMelnalksnis.PaperlessDotNet.DependencyInjection\VMelnalksnis.PaperlessDotNet.DependencyInjection.csproj" />
+	</ItemGroup>
+
+</Project>

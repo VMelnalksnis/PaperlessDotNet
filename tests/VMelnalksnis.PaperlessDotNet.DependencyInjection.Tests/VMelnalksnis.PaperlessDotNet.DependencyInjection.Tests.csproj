@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Extensions.Configuration" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\source\VMelnalksnis.PaperlessDotNet.DependencyInjection\VMelnalksnis.PaperlessDotNet.DependencyInjection.csproj" />
+	</ItemGroup>
+	
+</Project>
