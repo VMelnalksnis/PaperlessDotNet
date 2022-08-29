@@ -12,6 +12,7 @@ dotnet pack \
 	-p:AssemblyFileVersion="$full_version" \
 	-p:PackageVersion="$version" \
 	-p:InformationalVersion="$version""$3" \
+	/warnAsError \
 	/nologo ||
 	exit
 
