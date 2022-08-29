@@ -5,7 +5,6 @@
 		<ProductId>VMelnalksnis.PaperlessDotNet.DependencyInjection</ProductId>
 		<Description>Dependency injection configuration for VMelnalksnis.PaperlessDotNet</Description>
 		<PackageTags>paperless</PackageTags>
-		<PackageReadmeFile>README.md</PackageReadmeFile>
 
 		<IsPackable>true</IsPackable>
 		<IncludeSymbols>true</IncludeSymbols>
