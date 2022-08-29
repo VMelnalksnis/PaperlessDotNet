@@ -4,12 +4,15 @@
 
 using System.Text.Json.Serialization;
 
+using VMelnalksnis.PaperlessDotNet.Correspondents;
 using VMelnalksnis.PaperlessDotNet.Documents;
 
 namespace VMelnalksnis.PaperlessDotNet.Serialization;
 
 /// <inheritdoc />
 [JsonSourceGenerationOptions(GenerationMode = JsonSourceGenerationMode.Metadata)]
+[JsonSerializable(typeof(PaginatedList<Correspondent>))]
+[JsonSerializable(typeof(Correspondent))]
 [JsonSerializable(typeof(PaginatedList<Document>))]
 [JsonSerializable(typeof(Document))]
 internal partial class PaperlessJsonSerializerContext : JsonSerializerContext

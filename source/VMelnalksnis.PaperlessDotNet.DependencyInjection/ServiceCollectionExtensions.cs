@@ -12,6 +12,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
+using VMelnalksnis.PaperlessDotNet.Correspondents;
 using VMelnalksnis.PaperlessDotNet.Documents;
 using VMelnalksnis.PaperlessDotNet.Serialization;
 
@@ -46,6 +47,12 @@ public static class ServiceCollectionExtensions
 		return serviceCollection
 			.AddSingleton<PaperlessJsonSerializerOptions>()
 			.AddTransient<IPaperlessClient, PaperlessClient>()
+			.AddTransient<ICorrespondentClient, CorrespondentClient>(provider =>
+			{
+				var httpClient = provider.GetRequiredService<IHttpClientFactory>().CreateClient(PaperlessOptions.Name);
+				var options = provider.GetRequiredService<PaperlessJsonSerializerOptions>();
+				return new(httpClient, options);
+			})
 			.AddTransient<IDocumentClient, DocumentClient>(provider =>
 			{
 				var httpClient = provider.GetRequiredService<IHttpClientFactory>().CreateClient(PaperlessOptions.Name);

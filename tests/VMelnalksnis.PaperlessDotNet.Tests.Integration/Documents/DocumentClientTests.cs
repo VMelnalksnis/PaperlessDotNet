@@ -18,9 +18,6 @@ public sealed class DocumentClientTests : IClassFixture<ServiceProviderFixture>
 		_paperlessClient = serviceProviderFixture.GetPaperlessClient(testOutputHelper);
 	}
 
-	[Fact]
-	public void Pass() => Assert.True(true);
-
 	[Fact(Skip = "Requires a running Paperless instance")]
 	public async Task GetAll_ShouldReturnExpected()
 	{
@@ -33,5 +30,14 @@ public sealed class DocumentClientTests : IClassFixture<ServiceProviderFixture>
 		var document = await _paperlessClient.Documents.Get(expectedDocument.Id);
 
 		document.Should().BeEquivalentTo(expectedDocument);
+	}
+
+	[Fact(Skip = "Requires a running Paperless instance")]
+	public async Task GetAll_PageSizeShouldNotChangeResult()
+	{
+		var documents = await _paperlessClient.Documents.GetAll().ToListAsync();
+		var pageSizeDocuments = await _paperlessClient.Documents.GetAll(1).ToListAsync();
+
+		documents.Should().BeEquivalentTo(pageSizeDocuments);
 	}
 }

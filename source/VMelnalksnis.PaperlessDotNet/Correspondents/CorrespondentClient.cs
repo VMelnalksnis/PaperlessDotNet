@@ -11,47 +11,47 @@ using System.Threading.Tasks;
 
 using VMelnalksnis.PaperlessDotNet.Serialization;
 
-namespace VMelnalksnis.PaperlessDotNet.Documents;
+namespace VMelnalksnis.PaperlessDotNet.Correspondents;
 
 /// <inheritdoc />
-public sealed class DocumentClient : IDocumentClient
+public sealed class CorrespondentClient : ICorrespondentClient
 {
 	private readonly HttpClient _httpClient;
 	private readonly PaperlessJsonSerializerContext _context;
 
-	/// <summary>Initializes a new instance of the <see cref="DocumentClient"/> class.</summary>
+	/// <summary>Initializes a new instance of the <see cref="CorrespondentClient"/> class.</summary>
 	/// <param name="httpClient">Http client configured for making requests to the Paperless API.</param>
 	/// <param name="serializerOptions">Paperless specific instance of <see cref="JsonSerializerOptions"/>.</param>
-	public DocumentClient(HttpClient httpClient, PaperlessJsonSerializerOptions serializerOptions)
+	public CorrespondentClient(HttpClient httpClient, PaperlessJsonSerializerOptions serializerOptions)
 	{
 		_httpClient = httpClient;
 		_context = serializerOptions.Context;
 	}
 
 	/// <inheritdoc />
-	public IAsyncEnumerable<Document> GetAll(CancellationToken cancellationToken = default)
+	public IAsyncEnumerable<Correspondent> GetAll(CancellationToken cancellationToken = default)
 	{
 		return _httpClient.GetPaginated(
-			"/api/documents/",
-			_context.PaginatedListDocument,
+			"/api/correspondents/",
+			_context.PaginatedListCorrespondent,
 			cancellationToken);
 	}
 
 	/// <inheritdoc />
-	public IAsyncEnumerable<Document> GetAll(int pageSize, CancellationToken cancellationToken = default)
+	public IAsyncEnumerable<Correspondent> GetAll(int pageSize, CancellationToken cancellationToken = default)
 	{
 		return _httpClient.GetPaginated(
-			$"/api/documents/?page_size={pageSize}",
-			_context.PaginatedListDocument,
+			$"/api/correspondents/?page_size={pageSize}",
+			_context.PaginatedListCorrespondent,
 			cancellationToken);
 	}
 
 	/// <inheritdoc />
-	public Task<Document?> Get(int id, CancellationToken cancellationToken = default)
+	public Task<Correspondent?> Get(int id, CancellationToken cancellationToken = default)
 	{
 		return _httpClient.GetFromJsonAsync(
-			$"/api/documents/{id}/",
-			_context.Document,
+			$"/api/correspondents/{id}/",
+			_context.Correspondent,
 			cancellationToken);
 	}
 }
