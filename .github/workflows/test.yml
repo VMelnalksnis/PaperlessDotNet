@@ -48,7 +48,7 @@ jobs:
           Paperless__Token: 'token'
 
       - name: ReSharper annotations
-        uses: VMelnalksnis/resharper-inspect-action@v0.2.3
+        uses: VMelnalksnis/resharper-inspect-action@v0.2.4
         with:
           solution: PaperlessDotNet.sln
           resharper-version: 2022.1.2
