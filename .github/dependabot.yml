@@ -7,7 +7,9 @@ updates:
       interval: "daily"
       time: "07:00"
       timezone: "Europe/Riga"
-    open-pull-requests-limit: 10
+    open-pull-requests-limit: 100
+    assignees:
+      - "VMelnalksnis"
     
   - package-ecosystem: "github-actions"
     directory: "/"
@@ -15,4 +17,6 @@ updates:
       interval: "daily"
       time: "07:00"
       timezone: "Europe/Riga"
-    open-pull-requests-limit: 10
+    open-pull-requests-limit: 100
+    assignees:
+      - "VMelnalksnis"
