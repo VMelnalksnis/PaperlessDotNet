@@ -10,6 +10,8 @@ updates:
     open-pull-requests-limit: 100
     assignees:
       - "VMelnalksnis"
+    reviewers:
+      - "VMelnalksnis"
     
   - package-ecosystem: "github-actions"
     directory: "/"
@@ -19,4 +21,6 @@ updates:
       timezone: "Europe/Riga"
     open-pull-requests-limit: 100
     assignees:
+      - "VMelnalksnis"
+    reviewers:
       - "VMelnalksnis"
