@@ -6,7 +6,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Net.Mime;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,6 +14,10 @@ using Microsoft.Extensions.Options;
 using VMelnalksnis.PaperlessDotNet.Correspondents;
 using VMelnalksnis.PaperlessDotNet.Documents;
 using VMelnalksnis.PaperlessDotNet.Serialization;
+
+#if NET6_0_OR_GREATER
+using System.Net.Mime;
+#endif
 
 namespace VMelnalksnis.PaperlessDotNet.DependencyInjection;
 
@@ -34,7 +37,11 @@ public static class ServiceCollectionExtensions
 	/// <param name="serviceCollection">The service collection in which to register the services.</param>
 	/// <param name="configuration">The configuration to which to bind options models.</param>
 	/// <returns>The <see cref="IHttpClientBuilder"/> for the <see cref="HttpClient"/> used by <see cref="IPaperlessClient"/>.</returns>
+#if NET6_0_OR_GREATER
 	[UnconditionalSuppressMessage("ReflectionAnalysis", "IL2026", Justification = $"{nameof(PaperlessOptions)} contains only system types.")]
+#else
+	[SuppressMessage("Trimming", "IL2026", Justification = $"{nameof(PaperlessOptions)} contains only system types.")]
+#endif
 	public static IHttpClientBuilder AddPaperlessDotNet(
 		this IServiceCollection serviceCollection,
 		IConfiguration configuration)
@@ -65,7 +72,11 @@ public static class ServiceCollectionExtensions
 
 				client.BaseAddress = options.BaseAddress;
 				client.DefaultRequestHeaders.UserAgent.Add(_userAgent);
+#if NET6_0_OR_GREATER
 				client.DefaultRequestHeaders.Add("Accept", $"{MediaTypeNames.Application.Json}; version=2");
+#else
+				client.DefaultRequestHeaders.Add("Accept", "application/json; version=2");
+#endif
 				client.DefaultRequestHeaders.Authorization = new("Token", options.Token);
 			});
 	}

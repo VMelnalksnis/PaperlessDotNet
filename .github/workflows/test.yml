@@ -24,16 +24,14 @@ jobs:
     steps:
       - uses: actions/checkout@v3.1.0
       - uses: actions/setup-dotnet@v3.0.3
+        with:
+          dotnet-version: |
+            3.1.x
+            5.0.x
+            6.0.x
+            7.0.x
       - run: dotnet restore
-
-      - name: Build
-        run: >
-          dotnet build
-          --configuration Release
-          --no-restore
-          /warnAsError
-          /nologo
-          /clp:NoSummary
+      - run: dotnet build --configuration Release --no-restore /warnAsError /nologo /clp:NoSummary
 
       - name: Run Tests
         run: >
@@ -47,16 +45,26 @@ jobs:
           Paperless__BaseAddress: 'https://localhost:5002/'
           Paperless__Token: 'token'
 
-      - name: ReSharper annotations
-        uses: VMelnalksnis/resharper-inspect-action@v0.2.5
-        with:
-          solution: PaperlessDotNet.sln
-          resharper-version: 2022.1.2
-          treat-warnings-as-errors: true
-
       - name: Gather Code Coverage
         if: github.event.schedule == null
         uses: codecov/codecov-action@v3.1.1
         with:
           fail_ci_if_error: true
           token: ${{ secrets.CODECOV_TOKEN }}
+          
+  resharper:
+    name: Resharper
+    runs-on: ubuntu-latest
+    if: false #ReSharper currently does not support .NET 7
+    steps:
+      - uses: actions/checkout@v3.1.0
+      - uses: actions/setup-dotnet@v3.0.3
+      - run: dotnet restore
+      - run: dotnet build --configuration Release --no-restore /warnAsError /nologo /clp:NoSummary
+
+      - name: ReSharper annotations
+        uses: VMelnalksnis/resharper-inspect-action@v0.2.5
+        with:
+          solution: PaperlessDotNet.sln
+          resharper-version: 2022.1.2
+          treat-warnings-as-errors: true

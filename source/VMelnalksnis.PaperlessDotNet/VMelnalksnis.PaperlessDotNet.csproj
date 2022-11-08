@@ -19,6 +19,11 @@
 		<PackageReference Include="NodaTime" />
 		<PackageReference Include="NodaTime.Serialization.SystemTextJson" />
 	</ItemGroup>
+	
+	<ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+		<PackageReference Include="Microsoft.Bcl.AsyncInterfaces" />
+		<PackageReference Include="System.Net.Http.Json" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<None Include="..\..\README.md" Pack="true" PackagePath="\" />
