@@ -18,7 +18,7 @@ public sealed class ServiceCollectionExtensionsTests
 	public void AddPaperlessDotNet_ShouldRegisterRequiredServices()
 	{
 		var configuration = new ConfigurationBuilder()
-			.AddInMemoryCollection(new List<KeyValuePair<string, string>>
+			.AddInMemoryCollection(new List<KeyValuePair<string, string?>>
 			{
 				new($"{PaperlessOptions.Name}:{nameof(PaperlessOptions.BaseAddress)}", "https://localhost:5002/"),
 				new($"{PaperlessOptions.Name}:{nameof(PaperlessOptions.Token)}", Guid.NewGuid().ToString("N")),
