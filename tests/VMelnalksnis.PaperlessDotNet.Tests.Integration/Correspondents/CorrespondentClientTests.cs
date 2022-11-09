@@ -9,30 +9,25 @@ using Xunit.Abstractions;
 
 namespace VMelnalksnis.PaperlessDotNet.Tests.Integration.Correspondents;
 
-public sealed class CorrespondentClientTests : IClassFixture<ServiceProviderFixture>
+[Collection("Paperless")]
+public sealed class CorrespondentClientTests
 {
 	private readonly IPaperlessClient _paperlessClient;
 
-	public CorrespondentClientTests(ITestOutputHelper testOutputHelper, ServiceProviderFixture serviceProviderFixture)
+	public CorrespondentClientTests(ITestOutputHelper testOutputHelper, PaperlessFixture paperlessFixture)
 	{
-		_paperlessClient = serviceProviderFixture.GetPaperlessClient(testOutputHelper);
+		_paperlessClient = paperlessFixture.GetPaperlessClient(testOutputHelper);
 	}
 
-	[Fact(Skip = "Requires a running Paperless instance")]
+	[Fact]
 	public async Task GetAll_ShouldReturnExpected()
 	{
 		var correspondents = await _paperlessClient.Correspondents.GetAll().ToListAsync();
 
-		correspondents.Should().HaveCount(37);
-
-		var expectedCorrespondent = correspondents.First();
-
-		var correspondent = await _paperlessClient.Correspondents.Get(expectedCorrespondent.Id);
-
-		correspondent.Should().BeEquivalentTo(expectedCorrespondent);
+		correspondents.Should().BeEmpty();
 	}
 
-	[Fact(Skip = "Requires a running Paperless instance")]
+	[Fact]
 	public async Task GetAll_PageSizeShouldNotChangeResult()
 	{
 		var correspondents = await _paperlessClient.Correspondents.GetAll().ToListAsync();

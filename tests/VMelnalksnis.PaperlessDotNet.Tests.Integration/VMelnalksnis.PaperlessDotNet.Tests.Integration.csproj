@@ -10,6 +10,7 @@
 		<PackageReference Include="Serilog.AspNetCore" />
 		<PackageReference Include="Serilog.Sinks.XUnit" />
 		<PackageReference Include="System.Linq.Async" />
+		<PackageReference Include="Testcontainers" />
 	</ItemGroup>
 
 	<ItemGroup>
