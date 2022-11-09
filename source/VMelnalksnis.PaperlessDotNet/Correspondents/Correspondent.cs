@@ -2,6 +2,8 @@
 // Licensed under the Apache License 2.0.
 // See LICENSE file in the project root for full license information.
 
+using System.Text.Json.Serialization;
+
 using NodaTime;
 
 namespace VMelnalksnis.PaperlessDotNet.Correspondents;
@@ -22,14 +24,18 @@ public sealed class Correspondent
 	public string MatchingPattern { get; set; } = null!;
 
 	/// <summary>Gets or sets the id of the matching algorithm used to match the correspondent to documents.</summary>
+	[JsonPropertyName("matching_algorithm")]
 	public int MatchingAlgorithmId { get; set; }
 
 	/// <summary>Gets or sets a value indicating whether to ignore case when matching the correspondent to documents.</summary>
-	public bool CaseInsensitiveMatching { get; set; }
+	[JsonPropertyName("is_insensitive")]
+	public bool IsInsensitive { get; set; }
 
 	/// <summary>Gets or sets the number of documents with the correspondent.</summary>
+	[JsonPropertyName("document_count")]
 	public int DocumentCount { get; set; }
 
 	/// <summary>Gets or sets the instant when the last document with the correspondent was created.</summary>
+	[JsonPropertyName("last_correspondence")]
 	public Instant? LastCorrespondence { get; set; }
 }
