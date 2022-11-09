@@ -5,6 +5,7 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Json;
+using System.Text;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
@@ -53,5 +54,37 @@ public sealed class CorrespondentClient : ICorrespondentClient
 			$"/api/correspondents/{id}/",
 			_context.Correspondent,
 			cancellationToken);
+	}
+
+	/// <inheritdoc />
+	public async Task<Correspondent> Create(CorrespondentCreation correspondent)
+	{
+		// PostAsJsonAsync sends chunked data, and does not set Content-Length;
+		// Paperless interprets missing Content-Length as 0, and thus ignores any content
+		// https://github.com/aspnet/AspNetWebStack/issues/252
+		var json = JsonSerializer.Serialize(correspondent, _context.CorrespondentCreation);
+		var content = new StringContent(json, Encoding.UTF8, "application/json");
+		var response = await _httpClient.PostAsync("/api/correspondents/", content).ConfigureAwait(false);
+
+		await EnsureSuccessStatusCode(response).ConfigureAwait(false);
+		return (await response.Content.ReadFromJsonAsync(_context.Correspondent).ConfigureAwait(false))!;
+	}
+
+	/// <inheritdoc />
+	public async Task Delete(int id)
+	{
+		var response = await _httpClient.DeleteAsync($"/api/correspondents/{id}/").ConfigureAwait(false);
+		await EnsureSuccessStatusCode(response).ConfigureAwait(false);
+	}
+
+	private static async Task EnsureSuccessStatusCode(HttpResponseMessage response)
+	{
+		if (response.IsSuccessStatusCode)
+		{
+			return;
+		}
+
+		var message = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+		throw new HttpRequestException(message);
 	}
 }

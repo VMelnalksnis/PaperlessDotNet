@@ -27,4 +27,14 @@ public interface ICorrespondentClient
 	/// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
 	/// <returns>The correspondent with the specified id if it exists; otherwise <see langword="null"/>.</returns>
 	Task<Correspondent?> Get(int id, CancellationToken cancellationToken = default);
+
+	/// <summary>Creates a new correspondent.</summary>
+	/// <param name="correspondent">The correspondent to create.</param>
+	/// <returns>The created correspondent.</returns>
+	Task<Correspondent> Create(CorrespondentCreation correspondent);
+
+	/// <summary>Deletes a correspondent.</summary>
+	/// <param name="id">The id of the correspondent to delete.</param>
+	/// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+	Task Delete(int id);
 }

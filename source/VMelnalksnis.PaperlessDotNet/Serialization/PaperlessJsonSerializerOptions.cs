@@ -4,9 +4,14 @@
 
 using System.Net.Http;
 using System.Text.Json;
+using System.Text.Json.Serialization;
+
+using Ardalis.SmartEnum.SystemTextJson;
 
 using NodaTime;
 using NodaTime.Serialization.SystemTextJson;
+
+using VMelnalksnis.PaperlessDotNet.Correspondents;
 
 namespace VMelnalksnis.PaperlessDotNet.Serialization;
 
@@ -19,6 +24,9 @@ public sealed class PaperlessJsonSerializerOptions
 	{
 		var options = new JsonSerializerOptions(JsonSerializerDefaults.Web)
 			.ConfigureForNodaTime(dateTimeZoneProvider);
+
+		options.Converters.Add(new SmartEnumValueConverter<MatchingAlgorithm, int>());
+		options.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
 
 		Context = new(options);
 	}

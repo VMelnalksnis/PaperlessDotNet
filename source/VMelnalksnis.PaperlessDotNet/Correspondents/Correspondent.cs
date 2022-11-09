@@ -25,7 +25,7 @@ public sealed class Correspondent
 
 	/// <summary>Gets or sets the id of the matching algorithm used to match the correspondent to documents.</summary>
 	[JsonPropertyName("matching_algorithm")]
-	public int MatchingAlgorithmId { get; set; }
+	public MatchingAlgorithm MatchingAlgorithm { get; set; } = null!;
 
 	/// <summary>Gets or sets a value indicating whether to ignore case when matching the correspondent to documents.</summary>
 	[JsonPropertyName("is_insensitive")]

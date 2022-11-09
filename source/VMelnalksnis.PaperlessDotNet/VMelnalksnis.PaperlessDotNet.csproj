@@ -13,9 +13,12 @@
 
 		<SignAssembly>true</SignAssembly>
 		<AssemblyOriginatorKeyFile>key.snk</AssemblyOriginatorKeyFile>
+		<NoWarn>CS8002</NoWarn>
 	</PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Ardalis.SmartEnum" />
+		<PackageReference Include="Ardalis.SmartEnum.SystemTextJson" />
 		<PackageReference Include="NodaTime" />
 		<PackageReference Include="NodaTime.Serialization.SystemTextJson" />
 	</ItemGroup>
