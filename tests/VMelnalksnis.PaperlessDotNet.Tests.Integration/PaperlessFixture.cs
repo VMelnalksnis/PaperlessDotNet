@@ -4,8 +4,6 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
-using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 
 using DotNet.Testcontainers.Builders;
@@ -23,7 +21,7 @@ using NodaTime.Testing;
 using Serilog;
 
 using VMelnalksnis.PaperlessDotNet.DependencyInjection;
-using VMelnalksnis.PaperlessDotNet.Tests.Integration.Testcontainer;
+using VMelnalksnis.Testcontainers.Paperless;
 
 using Xunit.Abstractions;
 
@@ -35,7 +33,6 @@ namespace VMelnalksnis.PaperlessDotNet.Tests.Integration;
 public sealed class PaperlessFixture : IAsyncLifetime
 {
 	private const string _redisImage = "docker.io/library/redis:7";
-	private const int _defaultPaperlessPort = 8000;
 
 	private readonly List<ITestcontainersContainer> _containers = new();
 	private PaperlessOptions _options = null!;
@@ -54,16 +51,9 @@ public sealed class PaperlessFixture : IAsyncLifetime
 		_containers.Add(paperless);
 		await paperless.StartAsync();
 
-		var baseAddress = $"http://localhost:{paperless.GetMappedPublicPort(paperless.ContainerPort)}";
-		using var httpClient = new HttpClient();
-		var response = await httpClient.PostAsync($"{baseAddress}/api/token/", paperless.Login);
-		response.EnsureSuccessStatusCode();
-		var json = JsonNode.Parse(await response.Content.ReadAsStreamAsync());
-		_options = new()
-		{
-			BaseAddress = new($"http://localhost:{paperless.GetMappedPublicPort(_defaultPaperlessPort)}/"),
-			Token = json!["token"]!.GetValue<string>(),
-		};
+		var baseAddress = paperless.GetBaseAddress();
+		var token = await paperless.GetAdminToken();
+		_options = new() { BaseAddress = baseAddress, Token = token };
 	}
 
 	public Task DisposeAsync() => Task.WhenAll(_containers.Select(container => container.StopAsync()));
