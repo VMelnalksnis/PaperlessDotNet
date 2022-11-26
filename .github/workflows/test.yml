@@ -51,11 +51,10 @@ jobs:
         with:
           fail_ci_if_error: true
           token: ${{ secrets.CODECOV_TOKEN }}
-          
+
   resharper:
     name: Resharper
     runs-on: ubuntu-latest
-    if: false #ReSharper currently does not support .NET 7
     steps:
       - uses: actions/checkout@v3.1.0
       - uses: actions/setup-dotnet@v3.0.3
@@ -66,5 +65,5 @@ jobs:
         uses: VMelnalksnis/resharper-inspect-action@v0.2.5
         with:
           solution: PaperlessDotNet.sln
-          resharper-version: 2022.1.2
+          resharper-version: 2022.3.0-eap09
           treat-warnings-as-errors: true

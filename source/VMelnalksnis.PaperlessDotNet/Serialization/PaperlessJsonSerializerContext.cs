@@ -9,7 +9,7 @@ using VMelnalksnis.PaperlessDotNet.Documents;
 
 namespace VMelnalksnis.PaperlessDotNet.Serialization;
 
-/// <inheritdoc />
+/// <inheritdoc cref="JsonSerializerContext" />
 [JsonSourceGenerationOptions(GenerationMode = JsonSourceGenerationMode.Metadata)]
 [JsonSerializable(typeof(PaginatedList<Correspondent>))]
 [JsonSerializable(typeof(Correspondent))]
