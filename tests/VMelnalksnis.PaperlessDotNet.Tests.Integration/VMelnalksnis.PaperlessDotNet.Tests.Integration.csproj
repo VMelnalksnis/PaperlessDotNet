@@ -11,6 +11,7 @@
 		<PackageReference Include="Serilog.Sinks.XUnit" />
 		<PackageReference Include="System.Linq.Async" />
 		<PackageReference Include="Testcontainers" />
+		<PackageReference Include="Testcontainers.Redis" />
 		<PackageReference Include="VMelnalksnis.Testcontainers.Paperless" />
 	</ItemGroup>
 

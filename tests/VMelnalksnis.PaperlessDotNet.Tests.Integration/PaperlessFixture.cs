@@ -3,12 +3,10 @@
 // See LICENSE file in the project root for full license information.
 
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 using DotNet.Testcontainers.Builders;
-using DotNet.Testcontainers.Configurations;
-using DotNet.Testcontainers.Containers;
+using DotNet.Testcontainers.Networks;
 
 using JetBrains.Annotations;
 
@@ -19,6 +17,8 @@ using NodaTime;
 using NodaTime.Testing;
 
 using Serilog;
+
+using Testcontainers.Redis;
 
 using VMelnalksnis.PaperlessDotNet.DependencyInjection;
 using VMelnalksnis.Testcontainers.Paperless;
@@ -32,31 +32,50 @@ namespace VMelnalksnis.PaperlessDotNet.Tests.Integration;
 [UsedImplicitly(ImplicitUseKindFlags.InstantiatedNoFixedConstructorSignature)]
 public sealed class PaperlessFixture : IAsyncLifetime
 {
-	private const string _redisImage = "docker.io/library/redis:7";
+	private readonly INetwork _network;
+	private readonly RedisContainer _redis;
+	private readonly PaperlessContainer _paperless;
 
-	private readonly List<ITestcontainersContainer> _containers = new();
 	private PaperlessOptions _options = null!;
+
+	public PaperlessFixture()
+	{
+		const string redis = "redis";
+
+		_network = new NetworkBuilder().Build();
+
+		_redis = new RedisBuilder()
+			.WithImage("docker.io/library/redis:7")
+			.WithNetwork(_network)
+			.WithNetworkAliases(redis)
+			.Build();
+
+		_paperless = new PaperlessBuilder()
+			.WithNetwork(_network)
+			.DependsOn(_redis)
+			.WithRedis($"redis://{redis}:{RedisBuilder.RedisPort}")
+			.Build();
+	}
 
 	internal FakeClock Clock { get; } = new(SystemClock.Instance.GetCurrentInstant());
 
+	/// <inheritdoc />
 	public async Task InitializeAsync()
 	{
-		var redisConfiguration = new RedisTestcontainerConfiguration(_redisImage);
-		var redis = new TestcontainersBuilder<RedisTestcontainer>().WithDatabase(redisConfiguration).Build();
-		_containers.Add(redis);
-		await redis.StartAsync();
+		await _paperless.StartAsync();
 
-		var paperlessConfiguration = new PaperlessTestcontainerConfiguration();
-		var paperless = new TestcontainersBuilder<PaperlessTestcontainer>().WithPaperless(paperlessConfiguration, redis).Build();
-		_containers.Add(paperless);
-		await paperless.StartAsync();
-
-		var baseAddress = paperless.GetBaseAddress();
-		var token = await paperless.GetAdminToken();
+		var baseAddress = _paperless.GetBaseAddress();
+		var token = await _paperless.GetAdminToken();
 		_options = new() { BaseAddress = baseAddress, Token = token };
 	}
 
-	public Task DisposeAsync() => Task.WhenAll(_containers.Select(container => container.StopAsync()));
+	/// <inheritdoc />
+	public async Task DisposeAsync()
+	{
+		await _paperless.DisposeAsync();
+		await _redis.DisposeAsync();
+		await _network.DisposeAsync();
+	}
 
 	internal IPaperlessClient GetPaperlessClient(ITestOutputHelper testOutputHelper)
 	{
