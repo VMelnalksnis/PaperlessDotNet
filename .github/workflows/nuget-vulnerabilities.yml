@@ -26,7 +26,7 @@ jobs:
     
     steps:
       - uses: actions/checkout@v3.5.2
-      - uses: actions/setup-dotnet@v3.0.3
+      - uses: actions/setup-dotnet@v3.1.0
       - run: dotnet restore
 
       - name: Check vulnerable packages
