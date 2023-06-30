@@ -62,7 +62,7 @@ jobs:
       - run: dotnet build --configuration Release --no-restore /warnAsError /nologo /clp:NoSummary
 
       - name: ReSharper annotations
-        uses: VMelnalksnis/resharper-inspect-action@v0.2.5
+        uses: VMelnalksnis/resharper-inspect-action@v0.3.0
         with:
           solution: PaperlessDotNet.sln
           resharper-version: 2022.3.0
