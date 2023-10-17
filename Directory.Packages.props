@@ -31,7 +31,7 @@
 		<PackageVersion Include="StyleCop.Analyzers" Version="1.2.0-beta.507"/>
 		<PackageVersion Include="Testcontainers.Redis" Version="3.4.0"/>
 		<PackageVersion Include="VMelnalksnis.Testcontainers.Paperless" Version="0.2.0"/>
-		<PackageVersion Include="xunit" Version="2.5.0"/>
+		<PackageVersion Include="xunit" Version="2.5.3"/>
 		<PackageVersion Include="xunit.analyzers" Version="1.2.0"/>
 		<PackageVersion Include="xunit.runner.visualstudio" Version="2.4.5"/>
 	</ItemGroup>
