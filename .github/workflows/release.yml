@@ -19,12 +19,12 @@ jobs:
         project:
           - VMelnalksnis.PaperlessDotNet
           - VMelnalksnis.PaperlessDotNet.DependencyInjection
-    
+
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4.1.1
-      - uses: actions/setup-dotnet@v3.2.0
+      - uses: actions/setup-dotnet@v4.0.0
 
       - name: Publish project
         id: publish
@@ -44,7 +44,7 @@ jobs:
         with:
           name: ${{ steps.publish.outputs.symbols-name }}
           path: ${{ steps.publish.outputs.symbols }}
-  
+
   create-release:
     name: Create release
     needs: build-artifacts
