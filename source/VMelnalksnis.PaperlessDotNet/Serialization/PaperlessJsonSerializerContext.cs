@@ -16,6 +16,4 @@ namespace VMelnalksnis.PaperlessDotNet.Serialization;
 [JsonSerializable(typeof(CorrespondentCreation))]
 [JsonSerializable(typeof(PaginatedList<Document>))]
 [JsonSerializable(typeof(Document))]
-internal partial class PaperlessJsonSerializerContext : JsonSerializerContext
-{
-}
+internal partial class PaperlessJsonSerializerContext : JsonSerializerContext;

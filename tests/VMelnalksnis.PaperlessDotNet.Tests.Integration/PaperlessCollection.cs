@@ -5,6 +5,4 @@
 namespace VMelnalksnis.PaperlessDotNet.Tests.Integration;
 
 [CollectionDefinition("Paperless")]
-public sealed class PaperlessCollection : ICollectionFixture<PaperlessFixture>
-{
-}
+public sealed class PaperlessCollection : ICollectionFixture<PaperlessFixture>;
