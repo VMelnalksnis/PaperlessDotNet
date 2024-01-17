@@ -14,7 +14,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 using NodaTime;
-using NodaTime.Testing;
 
 using Serilog;
 
@@ -36,8 +35,6 @@ public sealed class PaperlessFixture : IAsyncLifetime
 	private readonly RedisContainer _redis;
 	private readonly PaperlessContainer _paperless;
 
-	private PaperlessOptions _options = null!;
-
 	public PaperlessFixture()
 	{
 		const string redis = "redis";
@@ -57,7 +54,7 @@ public sealed class PaperlessFixture : IAsyncLifetime
 			.Build();
 	}
 
-	internal FakeClock Clock { get; } = new(SystemClock.Instance.GetCurrentInstant());
+	internal PaperlessOptions Options { get; private set; } = null!;
 
 	/// <inheritdoc />
 	public async Task InitializeAsync()
@@ -66,7 +63,7 @@ public sealed class PaperlessFixture : IAsyncLifetime
 
 		var baseAddress = _paperless.GetBaseAddress();
 		var token = await _paperless.GetAdminToken();
-		_options = new() { BaseAddress = baseAddress, Token = token };
+		Options = new() { BaseAddress = baseAddress, Token = token };
 	}
 
 	/// <inheritdoc />
@@ -82,14 +79,13 @@ public sealed class PaperlessFixture : IAsyncLifetime
 		var configuration = new ConfigurationBuilder()
 			.AddInMemoryCollection(new List<KeyValuePair<string, string?>>
 			{
-				new("Paperless:BaseAddress", _options.BaseAddress.ToString()),
-				new("Paperless:Token", _options.Token),
+				new("Paperless:BaseAddress", Options.BaseAddress.ToString()),
+				new("Paperless:Token", Options.Token),
 			})
 			.Build();
 
 		var serviceCollection = new ServiceCollection();
 		serviceCollection
-			.AddSingleton<IClock>(Clock)
 			.AddSingleton(DateTimeZoneProviders.Tzdb)
 			.AddPaperlessDotNet(configuration);
 

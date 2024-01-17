@@ -14,7 +14,7 @@ is provided for ASP.NET Core
 and [IServiceCollection](https://docs.microsoft.com/en-us/dotnet/api/microsoft.extensions.dependencyinjection.iservicecollection))
 .
 For use outside of ASP.NET Core, see the
-[configuration](source/VMelnalksnis.PaperlessDotNet.DependencyInjection/ServiceCollectionExtensions.cs).
+[example in tests](tests/VMelnalksnis.PaperlessDotNet.Tests.Integration/MinimalExampleTests.cs).
 
 1. Add configuration (see [options](source/VMelnalksnis.PaperlessDotNet.DependencyInjection/PaperlessOptions.cs))
    ```yaml
@@ -27,7 +27,6 @@ For use outside of ASP.NET Core, see the
 2. Register required services (see [tests](tests/VMelnalksnis.PaperlessDotNet.DependencyInjection.Tests/ServiceCollectionExtensionsTests.cs))
    ```csharp
    serviceCollection
-       .AddSingleton<IClock>(SystemClock.Instance)
        .AddSingleton(DateTimeZoneProviders.Tzdb)
        .AddPaperlessDotNet(Configuration);
    ```
