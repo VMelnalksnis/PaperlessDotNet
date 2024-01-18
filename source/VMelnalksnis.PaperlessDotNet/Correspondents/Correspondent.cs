@@ -37,5 +37,5 @@ public sealed class Correspondent
 
 	/// <summary>Gets or sets the instant when the last document with the correspondent was created.</summary>
 	[JsonPropertyName("last_correspondence")]
-	public Instant? LastCorrespondence { get; set; }
+	public OffsetDateTime? LastCorrespondence { get; set; }
 }
