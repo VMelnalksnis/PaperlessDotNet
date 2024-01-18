@@ -12,6 +12,7 @@ using NodaTime;
 using VMelnalksnis.PaperlessDotNet.Correspondents;
 using VMelnalksnis.PaperlessDotNet.Documents;
 using VMelnalksnis.PaperlessDotNet.Serialization;
+using VMelnalksnis.PaperlessDotNet.Tasks;
 
 namespace VMelnalksnis.PaperlessDotNet.Tests.Integration;
 
@@ -29,8 +30,9 @@ public sealed class MinimalExampleTests
 		httpClient.DefaultRequestHeaders.Authorization = new("Token", options.Token);
 
 		var serializerOptions = new PaperlessJsonSerializerOptions(DateTimeZoneProviders.Tzdb);
+		var taskClient = new TaskClient(httpClient, serializerOptions);
 		var correspondentClient = new CorrespondentClient(httpClient, serializerOptions);
-		var documentClient = new DocumentClient(httpClient, serializerOptions);
+		var documentClient = new DocumentClient(httpClient, serializerOptions, taskClient);
 
 		_paperlessClient = new PaperlessClient(correspondentClient, documentClient);
 	}

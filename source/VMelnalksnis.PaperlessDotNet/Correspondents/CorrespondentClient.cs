@@ -66,7 +66,7 @@ public sealed class CorrespondentClient : ICorrespondentClient
 		var content = new StringContent(json, Encoding.UTF8, "application/json");
 		var response = await _httpClient.PostAsync("/api/correspondents/", content).ConfigureAwait(false);
 
-		await EnsureSuccessStatusCode(response).ConfigureAwait(false);
+		await response.EnsureSuccessStatusCodeAsync().ConfigureAwait(false);
 		return (await response.Content.ReadFromJsonAsync(_context.Correspondent).ConfigureAwait(false))!;
 	}
 
@@ -74,17 +74,6 @@ public sealed class CorrespondentClient : ICorrespondentClient
 	public async Task Delete(int id)
 	{
 		var response = await _httpClient.DeleteAsync($"/api/correspondents/{id}/").ConfigureAwait(false);
-		await EnsureSuccessStatusCode(response).ConfigureAwait(false);
-	}
-
-	private static async Task EnsureSuccessStatusCode(HttpResponseMessage response)
-	{
-		if (response.IsSuccessStatusCode)
-		{
-			return;
-		}
-
-		var message = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-		throw new HttpRequestException(message);
+		await response.EnsureSuccessStatusCodeAsync().ConfigureAwait(false);
 	}
 }

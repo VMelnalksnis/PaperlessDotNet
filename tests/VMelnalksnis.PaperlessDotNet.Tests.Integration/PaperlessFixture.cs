@@ -14,6 +14,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 using NodaTime;
+using NodaTime.Testing;
 
 using Serilog;
 
@@ -48,6 +49,7 @@ public sealed class PaperlessFixture : IAsyncLifetime
 			.Build();
 
 		_paperless = new PaperlessBuilder()
+			.WithImage($"{PaperlessBuilder.PaperlessImage}:2.3.3")
 			.WithNetwork(_network)
 			.DependsOn(_redis)
 			.WithRedis($"redis://{redis}:{RedisBuilder.RedisPort}")
@@ -55,6 +57,8 @@ public sealed class PaperlessFixture : IAsyncLifetime
 	}
 
 	internal PaperlessOptions Options { get; private set; } = null!;
+
+	internal IClock Clock { get; } = new FakeClock(Instant.FromUtc(2024, 01, 17, 18, 8, 23), Duration.Zero);
 
 	/// <inheritdoc />
 	public async Task InitializeAsync()

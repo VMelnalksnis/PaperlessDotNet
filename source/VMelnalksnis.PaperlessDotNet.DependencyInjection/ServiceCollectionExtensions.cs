@@ -14,6 +14,7 @@ using Microsoft.Extensions.Options;
 using VMelnalksnis.PaperlessDotNet.Correspondents;
 using VMelnalksnis.PaperlessDotNet.Documents;
 using VMelnalksnis.PaperlessDotNet.Serialization;
+using VMelnalksnis.PaperlessDotNet.Tasks;
 
 #if NET6_0_OR_GREATER
 using System.Net.Mime;
@@ -53,18 +54,25 @@ public static class ServiceCollectionExtensions
 
 		return serviceCollection
 			.AddSingleton<PaperlessJsonSerializerOptions>()
-			.AddTransient<IPaperlessClient, PaperlessClient>()
-			.AddTransient<ICorrespondentClient, CorrespondentClient>(provider =>
+			.AddScoped<IPaperlessClient, PaperlessClient>()
+			.AddScoped<ITaskClient, TaskClient>(provider =>
 			{
 				var httpClient = provider.GetRequiredService<IHttpClientFactory>().CreateClient(PaperlessOptions.Name);
 				var options = provider.GetRequiredService<PaperlessJsonSerializerOptions>();
 				return new(httpClient, options);
 			})
-			.AddTransient<IDocumentClient, DocumentClient>(provider =>
+			.AddScoped<ICorrespondentClient, CorrespondentClient>(provider =>
 			{
 				var httpClient = provider.GetRequiredService<IHttpClientFactory>().CreateClient(PaperlessOptions.Name);
 				var options = provider.GetRequiredService<PaperlessJsonSerializerOptions>();
 				return new(httpClient, options);
+			})
+			.AddScoped<IDocumentClient, DocumentClient>(provider =>
+			{
+				var httpClient = provider.GetRequiredService<IHttpClientFactory>().CreateClient(PaperlessOptions.Name);
+				var options = provider.GetRequiredService<PaperlessJsonSerializerOptions>();
+				var taskClient = provider.GetRequiredService<ITaskClient>();
+				return new(httpClient, options, taskClient);
 			})
 			.AddHttpClient(PaperlessOptions.Name, (provider, client) =>
 			{

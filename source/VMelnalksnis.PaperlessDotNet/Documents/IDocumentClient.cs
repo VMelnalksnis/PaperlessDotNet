@@ -27,4 +27,9 @@ public interface IDocumentClient
 	/// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
 	/// <returns>The document with the specified id if it exists; otherwise <see langword="null"/>.</returns>
 	Task<Document?> Get(int id, CancellationToken cancellationToken = default);
+
+	/// <summary>Creates a new document.</summary>
+	/// <param name="document">The document to create.</param>
+	/// <returns>Result of creating the document.</returns>
+	Task<DocumentCreationResult> Create(DocumentCreation document);
 }

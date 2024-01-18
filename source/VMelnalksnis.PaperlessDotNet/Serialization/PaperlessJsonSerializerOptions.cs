@@ -12,6 +12,7 @@ using NodaTime;
 using NodaTime.Serialization.SystemTextJson;
 
 using VMelnalksnis.PaperlessDotNet.Correspondents;
+using VMelnalksnis.PaperlessDotNet.Tasks;
 
 namespace VMelnalksnis.PaperlessDotNet.Serialization;
 
@@ -26,6 +27,8 @@ public sealed class PaperlessJsonSerializerOptions
 			.ConfigureForNodaTime(dateTimeZoneProvider);
 
 		options.Converters.Add(new SmartEnumValueConverter<MatchingAlgorithm, int>());
+		options.Converters.Add(new SmartEnumNameConverter<PaperlessTaskStatus, int>());
+
 		options.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
 
 		Context = new(options);

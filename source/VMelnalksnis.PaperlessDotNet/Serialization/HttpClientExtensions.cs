@@ -8,6 +8,7 @@ using System.Net.Http.Json;
 using System.Runtime.CompilerServices;
 using System.Text.Json.Serialization.Metadata;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace VMelnalksnis.PaperlessDotNet.Serialization;
 
@@ -36,5 +37,16 @@ internal static class HttpClientExtensions
 
 			next = paginatedList.Next?.PathAndQuery;
 		}
+	}
+
+	internal static async Task EnsureSuccessStatusCodeAsync(this HttpResponseMessage response)
+	{
+		if (response.IsSuccessStatusCode)
+		{
+			return;
+		}
+
+		var message = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+		throw new HttpRequestException(message);
 	}
 }

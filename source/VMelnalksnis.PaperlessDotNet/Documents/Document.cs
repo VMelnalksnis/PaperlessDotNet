@@ -18,9 +18,9 @@ public sealed class Document
 
 	/// <summary>Gets or sets the archive serial number.</summary>
 	[JsonPropertyName("archive_serial_number")]
-	public int? ArchiveSerialNumber { get; set; }
+	public uint? ArchiveSerialNumber { get; set; }
 
-	/// <summary>Gets or sets the correspondent id.</summary>
+	/// <summary>Gets or sets the <see cref="Correspondents.Correspondent"/> id.</summary>
 	[JsonPropertyName("correspondent")]
 	public int? CorrespondentId { get; set; }
 

@@ -19,4 +19,8 @@
 		<ProjectReference Include="..\..\source\VMelnalksnis.PaperlessDotNet.DependencyInjection\VMelnalksnis.PaperlessDotNet.DependencyInjection.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+		<EmbeddedResource Include="Documents/Lorem Ipsum.txt" />
+	</ItemGroup>
+
 </Project>
