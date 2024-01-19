@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\source\VMelnalksnis.PaperlessDotNet\VMelnalksnis.PaperlessDotNet.csproj"/>
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="xunit"/>
+		<PackageReference Include="xunit.runner.visualstudio">
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+			<PrivateAssets>all</PrivateAssets>
+		</PackageReference>
+	</ItemGroup>
+
+	<ItemGroup>
+		<Using Include="Xunit"/>
+	</ItemGroup>
+
+</Project>

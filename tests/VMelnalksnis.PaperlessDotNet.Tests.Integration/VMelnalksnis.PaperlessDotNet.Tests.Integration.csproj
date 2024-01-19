@@ -10,6 +10,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Extensions.Configuration" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Console" />
 		<PackageReference Include="NodaTime.Testing" />
 		<PackageReference Include="NUnit" />
 		<PackageReference Include="NUnit.Analyzers">
@@ -17,8 +18,6 @@
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="NUnit3TestAdapter" />
-		<PackageReference Include="Serilog" />
-		<PackageReference Include="Serilog.AspNetCore" />
 		<PackageReference Include="System.Linq.Async" />
 		<PackageReference Include="Testcontainers.Redis" />
 		<PackageReference Include="VMelnalksnis.Testcontainers.Paperless" />
@@ -29,7 +28,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<EmbeddedResource Include="Documents/Lorem Ipsum.txt" />
+		<EmbeddedResource Include="Documents\Lorem Ipsum.txt" />
+		<EmbeddedResource Include="Documents\Lorem Ipsum 2.txt" />
 	</ItemGroup>
 
 </Project>

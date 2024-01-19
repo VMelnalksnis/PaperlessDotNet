@@ -2,6 +2,7 @@
 // Licensed under the Apache License 2.0.
 // See LICENSE file in the project root for full license information.
 
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Net.Http;
@@ -10,6 +11,8 @@ using System.Net.Http.Headers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+
+using NodaTime;
 
 using VMelnalksnis.PaperlessDotNet.Correspondents;
 using VMelnalksnis.PaperlessDotNet.Documents;
@@ -37,6 +40,7 @@ public static class ServiceCollectionExtensions
 	/// <summary>Adds all required services for <see cref="IPaperlessClient"/>, excluding external dependencies.</summary>
 	/// <param name="serviceCollection">The service collection in which to register the services.</param>
 	/// <param name="configuration">The configuration to which to bind options models.</param>
+	/// <param name="config">A delegate that is used to configure <see cref="PaperlessJsonSerializerOptions"/>.</param>
 	/// <returns>The <see cref="IHttpClientBuilder"/> for the <see cref="HttpClient"/> used by <see cref="IPaperlessClient"/>.</returns>
 #if NET6_0_OR_GREATER
 	[UnconditionalSuppressMessage("ReflectionAnalysis", "IL2026", Justification = $"{nameof(PaperlessOptions)} contains only system types.")]
@@ -45,7 +49,8 @@ public static class ServiceCollectionExtensions
 #endif
 	public static IHttpClientBuilder AddPaperlessDotNet(
 		this IServiceCollection serviceCollection,
-		IConfiguration configuration)
+		IConfiguration configuration,
+		Action<PaperlessJsonSerializerOptions>? config = null)
 	{
 		serviceCollection
 			.AddOptions<PaperlessOptions>()
@@ -53,7 +58,12 @@ public static class ServiceCollectionExtensions
 			.ValidateDataAnnotations();
 
 		return serviceCollection
-			.AddSingleton<PaperlessJsonSerializerOptions>()
+			.AddSingleton<PaperlessJsonSerializerOptions>(provider =>
+			{
+				var options = new PaperlessJsonSerializerOptions(provider.GetRequiredService<IDateTimeZoneProvider>());
+				config?.Invoke(options);
+				return options;
+			})
 			.AddScoped<IPaperlessClient, PaperlessClient>()
 			.AddScoped<ITaskClient, TaskClient>(provider =>
 			{

@@ -2,8 +2,6 @@
 // Licensed under the Apache License 2.0.
 // See LICENSE file in the project root for full license information.
 
-using System.Text.Json.Serialization;
-
 namespace VMelnalksnis.PaperlessDotNet.Correspondents;
 
 /// <summary>Information needed to create a new <see cref="Correspondent"/>.</summary>
@@ -26,10 +24,8 @@ public sealed class CorrespondentCreation
 	public string? Match { get; set; }
 
 	/// <inheritdoc cref="Correspondent.MatchingAlgorithm"/>
-	[JsonPropertyName("matching_algorithm")]
 	public MatchingAlgorithm? MatchingAlgorithm { get; set; }
 
 	/// <inheritdoc cref="Correspondent.IsInsensitive"/>
-	[JsonPropertyName("is_insensitive")]
 	public bool? IsInsensitive { get; set; }
 }

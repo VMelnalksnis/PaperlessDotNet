@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Runtime.CompilerServices;
+using System.Text;
+using System.Text.Json;
 using System.Text.Json.Serialization.Metadata;
 using System.Threading;
 using System.Threading.Tasks;
@@ -37,6 +39,39 @@ internal static class HttpClientExtensions
 
 			next = paginatedList.Next?.PathAndQuery;
 		}
+	}
+
+	internal static Task<HttpResponseMessage> PostAsJsonAsync<TValue>(
+		this HttpClient httpClient,
+		string requestUri,
+		TValue value,
+		JsonTypeInfo<TValue> typeInfo)
+	{
+		// PostAsJsonAsync sends chunked data, and does not set Content-Length;
+		// Paperless interprets missing Content-Length as 0, and thus ignores any content
+		// https://github.com/aspnet/AspNetWebStack/issues/252
+		var json = JsonSerializer.Serialize(value, typeInfo);
+		var content = new StringContent(json, Encoding.UTF8, "application/json");
+		return httpClient.PostAsync(requestUri, content);
+	}
+
+	internal static Task<HttpResponseMessage> PatchAsJsonAsync<TValue>(
+		this HttpClient httpClient,
+		string requestUri,
+		TValue value,
+		JsonTypeInfo<TValue> typeInfo)
+	{
+		var json = JsonSerializer.Serialize(value, typeInfo);
+		var content = new StringContent(json, Encoding.UTF8, "application/json");
+#if NETSTANDARD2_0
+		var message = new HttpRequestMessage(new("PATCH"), requestUri)
+		{
+			Content = content,
+		};
+		return httpClient.SendAsync(message);
+#else
+		return httpClient.PatchAsync(requestUri, content);
+#endif
 	}
 
 	internal static async Task EnsureSuccessStatusCodeAsync(this HttpResponseMessage response)

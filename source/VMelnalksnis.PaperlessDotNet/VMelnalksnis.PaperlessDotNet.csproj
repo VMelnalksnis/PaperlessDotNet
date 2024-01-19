@@ -17,10 +17,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Ardalis.SmartEnum" />
 		<PackageReference Include="Ardalis.SmartEnum.SystemTextJson" />
 		<PackageReference Include="NodaTime" />
 		<PackageReference Include="NodaTime.Serialization.SystemTextJson" />
+		<PackageReference Include="System.Text.Json" />
 	</ItemGroup>
 	
 	<ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">

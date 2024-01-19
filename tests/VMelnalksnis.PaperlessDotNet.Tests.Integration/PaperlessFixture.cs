@@ -11,15 +11,17 @@ using DotNet.Testcontainers.Networks;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Console;
 
 using NodaTime;
 using NodaTime.Testing;
 
-using Serilog;
-
 using Testcontainers.Redis;
 
 using VMelnalksnis.PaperlessDotNet.DependencyInjection;
+using VMelnalksnis.PaperlessDotNet.Serialization;
+using VMelnalksnis.PaperlessDotNet.Tests.Integration.Documents;
 using VMelnalksnis.Testcontainers.Paperless;
 
 namespace VMelnalksnis.PaperlessDotNet.Tests.Integration;
@@ -83,7 +85,7 @@ public sealed class PaperlessFixture : IAsyncDisposable
 		Options = new() { BaseAddress = baseAddress, Token = token };
 	}
 
-	internal IPaperlessClient GetPaperlessClient()
+	internal ServiceProvider GetServiceProvider()
 	{
 		var configuration = new ConfigurationBuilder()
 			.AddInMemoryCollection(new List<KeyValuePair<string, string?>>
@@ -96,20 +98,24 @@ public sealed class PaperlessFixture : IAsyncDisposable
 		var serviceCollection = new ServiceCollection();
 		serviceCollection
 			.AddSingleton(DateTimeZoneProviders.Tzdb)
-			.AddPaperlessDotNet(configuration)
+			.AddSingleton(Clock)
+			.AddPaperlessDotNet(
+				configuration,
+				options =>
+				{
+					options.Options.Converters.Add(new CustomFieldsConverter<CustomFields>(options));
+					options.Options.TypeInfoResolverChain.Add(SerializerContext.Default);
+				})
 			.ConfigureHttpClient(client => client.Timeout = TimeSpan.FromSeconds(5));
 
-		serviceCollection.AddLogging(builder =>
-		{
-			var logger = new LoggerConfiguration()
-				.MinimumLevel.Verbose()
-				.WriteTo.Console(outputTemplate: "{Timestamp:HH:mm:ss} [{Level:u3}] [{SourceContext}] {Message:lj}{NewLine}{Exception}")
-				.Enrich.FromLogContext()
-				.CreateLogger();
+		serviceCollection.AddLogging(builder => builder
+			.SetMinimumLevel(LogLevel.Trace)
+			.AddSimpleConsole(options =>
+			{
+				options.ColorBehavior = LoggerColorBehavior.Enabled;
+				options.IncludeScopes = true;
+			}));
 
-			builder.AddSerilog(logger);
-		});
-
-		return serviceCollection.BuildServiceProvider().GetRequiredService<IPaperlessClient>();
+		return serviceCollection.BuildServiceProvider(true);
 	}
 }

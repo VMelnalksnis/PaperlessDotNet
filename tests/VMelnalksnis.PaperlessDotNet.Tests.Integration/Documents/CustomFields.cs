@@ -1,0 +1,28 @@
+﻿// Copyright 2022 Valters Melnalksnis
+// Licensed under the Apache License 2.0.
+// See LICENSE file in the project root for full license information.
+
+using System;
+
+using NodaTime;
+
+namespace VMelnalksnis.PaperlessDotNet.Tests.Integration.Documents;
+
+internal sealed class CustomFields
+{
+	public string? Field1 { get; set; }
+
+	public Uri? Field2 { get; set; }
+
+	public LocalDate? Field3 { get; set; }
+
+	public bool? Field4 { get; set; }
+
+	public int? Field5 { get; set; }
+
+	public float? Field6 { get; set; }
+
+	public float? Field7 { get; set; }
+
+	public int[]? Field8 { get; set; }
+}

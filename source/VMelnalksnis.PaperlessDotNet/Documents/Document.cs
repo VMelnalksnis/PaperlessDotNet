@@ -10,14 +10,12 @@ using NodaTime;
 namespace VMelnalksnis.PaperlessDotNet.Documents;
 
 /// <summary>An archived document.</summary>
-public sealed class Document
+public class Document
 {
 	/// <summary>Gets or sets the verbose filename if the archived document, if available.</summary>
-	[JsonPropertyName("archived_file_name")]
 	public string? ArchivedFileName { get; set; }
 
 	/// <summary>Gets or sets the archive serial number.</summary>
-	[JsonPropertyName("archive_serial_number")]
 	public uint? ArchiveSerialNumber { get; set; }
 
 	/// <summary>Gets or sets the <see cref="Correspondents.Correspondent"/> id.</summary>
@@ -28,8 +26,11 @@ public sealed class Document
 	[JsonPropertyName("document_type")]
 	public int? DocumentTypeId { get; set; }
 
+	/// <summary>Gets or sets the id of the document type.</summary>
+	[JsonPropertyName("storage_path")]
+	public int? StoragePathId { get; set; }
+
 	/// <summary>Gets or sets the verbose filename of the original document.</summary>
-	[JsonPropertyName("original_file_name")]
 	public string OriginalFileName { get; set; } = null!;
 
 	/// <summary>Gets or sets the datetime when the document was added to paperless.</summary>
@@ -54,3 +55,13 @@ public sealed class Document
 	/// <summary>Gets or sets the id of the document.</summary>
 	public int Id { get; set; }
 }
+
+/// <summary>An archived document with custom fields.</summary>
+/// <typeparam name="TFields">The type containing the custom fields.</typeparam>
+#pragma warning disable SA1402
+public class Document<TFields> : Document
+{
+	/// <summary>Gets or sets the custom fields of the document.</summary>
+	public TFields? CustomFields { get; set; }
+}
+#pragma warning restore SA1402

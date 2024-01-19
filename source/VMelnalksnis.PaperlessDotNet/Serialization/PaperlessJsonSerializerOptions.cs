@@ -2,6 +2,7 @@
 // Licensed under the Apache License 2.0.
 // See LICENSE file in the project root for full license information.
 
+using System.Collections.Concurrent;
 using System.Net.Http;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -12,6 +13,7 @@ using NodaTime;
 using NodaTime.Serialization.SystemTextJson;
 
 using VMelnalksnis.PaperlessDotNet.Correspondents;
+using VMelnalksnis.PaperlessDotNet.Documents;
 using VMelnalksnis.PaperlessDotNet.Tasks;
 
 namespace VMelnalksnis.PaperlessDotNet.Serialization;
@@ -23,16 +25,26 @@ public sealed class PaperlessJsonSerializerOptions
 	/// <param name="dateTimeZoneProvider">Time zone provider for date and time serialization.</param>
 	public PaperlessJsonSerializerOptions(IDateTimeZoneProvider dateTimeZoneProvider)
 	{
-		var options = new JsonSerializerOptions(JsonSerializerDefaults.Web)
-			.ConfigureForNodaTime(dateTimeZoneProvider);
+		Options = new(JsonSerializerDefaults.Web)
+		{
+			DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+			PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower,
+			WriteIndented = true,
+		};
 
-		options.Converters.Add(new SmartEnumValueConverter<MatchingAlgorithm, int>());
-		options.Converters.Add(new SmartEnumNameConverter<PaperlessTaskStatus, int>());
+		Options.ConfigureForNodaTime(dateTimeZoneProvider);
+		Options.Converters.Add(new SmartEnumValueConverter<MatchingAlgorithm, int>());
+		Options.Converters.Add(new SmartEnumNameConverter<PaperlessTaskStatus, int>());
+		Options.Converters.Add(new SmartEnumNameConverter<CustomFieldType, int>());
 
-		options.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+		Options.TypeInfoResolverChain.Add(PaperlessJsonSerializerContext.Default);
 
-		Context = new(options);
+		CustomFields = new();
 	}
 
-	internal PaperlessJsonSerializerContext Context { get; }
+	/// <summary>Gets the options to use for serialization of paperless API data.</summary>
+	public JsonSerializerOptions Options { get; }
+
+	/// <summary>Gets the custom field definitions.</summary>
+	public ConcurrentDictionary<int, CustomField> CustomFields { get; }
 }

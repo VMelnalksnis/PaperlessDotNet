@@ -19,7 +19,7 @@ namespace VMelnalksnis.PaperlessDotNet.Tasks;
 public sealed class TaskClient : ITaskClient
 {
 	private readonly HttpClient _httpClient;
-	private readonly PaperlessJsonSerializerContext _context;
+	private readonly JsonSerializerOptions _options;
 
 	/// <summary>Initializes a new instance of the <see cref="TaskClient"/> class.</summary>
 	/// <param name="httpClient">Http client configured for making requests to the Paperless API.</param>
@@ -27,20 +27,20 @@ public sealed class TaskClient : ITaskClient
 	public TaskClient(HttpClient httpClient, PaperlessJsonSerializerOptions serializerOptions)
 	{
 		_httpClient = httpClient;
-		_context = serializerOptions.Context;
+		_options = serializerOptions.Options;
 	}
 
 	/// <inheritdoc />
 	public Task<List<PaperlessTask>> GetAll(CancellationToken cancellationToken = default)
 	{
-		return _httpClient.GetFromJsonAsync("/api/tasks/", _context.ListPaperlessTask, cancellationToken)!;
+		return _httpClient.GetFromJsonAsync("/api/tasks/", _options.GetTypeInfo<List<PaperlessTask>>(), cancellationToken)!;
 	}
 
 	/// <inheritdoc />
 	public async Task<PaperlessTask?> Get(Guid taskId, CancellationToken cancellationToken = default)
 	{
 		var tasks = await _httpClient
-			.GetFromJsonAsync($"/api/tasks/?task_id={taskId}", _context.ListPaperlessTask, cancellationToken)
+			.GetFromJsonAsync($"/api/tasks/?task_id={taskId}", _options.GetTypeInfo<List<PaperlessTask>>(), cancellationToken)
 			.ConfigureAwait(false);
 
 		return tasks?.SingleOrDefault();

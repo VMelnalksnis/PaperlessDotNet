@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
+using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
@@ -24,8 +25,9 @@ public sealed class DocumentClient : IDocumentClient
 	private static readonly Version _documentIdVersion = new(1, 9, 2);
 
 	private readonly HttpClient _httpClient;
-	private readonly PaperlessJsonSerializerContext _context;
 	private readonly ITaskClient _taskClient;
+	private readonly JsonSerializerOptions _options;
+	private readonly PaperlessJsonSerializerOptions _paperlessOptions;
 
 	/// <summary>Initializes a new instance of the <see cref="DocumentClient"/> class.</summary>
 	/// <param name="httpClient">Http client configured for making requests to the Paperless API.</param>
@@ -35,34 +37,73 @@ public sealed class DocumentClient : IDocumentClient
 	{
 		_httpClient = httpClient;
 		_taskClient = taskClient;
-		_context = serializerOptions.Context;
+		_options = serializerOptions.Options;
+		_paperlessOptions = serializerOptions;
 	}
 
 	/// <inheritdoc />
 	public IAsyncEnumerable<Document> GetAll(CancellationToken cancellationToken = default)
 	{
-		return _httpClient.GetPaginated(
-			"/api/documents/",
-			_context.PaginatedListDocument,
-			cancellationToken);
+		return GetAllCore<Document>("/api/documents/", cancellationToken);
+	}
+
+	/// <inheritdoc />
+	public async IAsyncEnumerable<Document<TFields>> GetAll<TFields>([EnumeratorCancellation] CancellationToken cancellationToken = default)
+	{
+		if (_paperlessOptions.CustomFields.Count is 0)
+		{
+			await foreach (var unused in GetCustomFields(cancellationToken).ConfigureAwait(false))
+			{
+			}
+		}
+
+		var documents = GetAllCore<Document<TFields>>("/api/documents/", cancellationToken);
+		await foreach (var document in documents.ConfigureAwait(false))
+		{
+			yield return document;
+		}
 	}
 
 	/// <inheritdoc />
 	public IAsyncEnumerable<Document> GetAll(int pageSize, CancellationToken cancellationToken = default)
 	{
-		return _httpClient.GetPaginated(
-			$"/api/documents/?page_size={pageSize}",
-			_context.PaginatedListDocument,
-			cancellationToken);
+		return GetAllCore<Document>($"/api/documents/?page_size={pageSize}", cancellationToken);
+	}
+
+	/// <inheritdoc />
+	public async IAsyncEnumerable<Document<TFields>> GetAll<TFields>(int pageSize, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+	{
+		if (_paperlessOptions.CustomFields.Count is 0)
+		{
+			await foreach (var unused in GetCustomFields(cancellationToken).ConfigureAwait(false))
+			{
+			}
+		}
+
+		var documents = GetAllCore<Document<TFields>>($"/api/documents/?page_size={pageSize}", cancellationToken);
+		await foreach (var document in documents.ConfigureAwait(false))
+		{
+			yield return document;
+		}
 	}
 
 	/// <inheritdoc />
 	public Task<Document?> Get(int id, CancellationToken cancellationToken = default)
 	{
-		return _httpClient.GetFromJsonAsync(
-			$"/api/documents/{id}/",
-			_context.Document,
-			cancellationToken);
+		return GetCore<Document>(id, cancellationToken);
+	}
+
+	/// <inheritdoc />
+	public async Task<Document<TFields>?> Get<TFields>(int id, CancellationToken cancellationToken = default)
+	{
+		if (_paperlessOptions.CustomFields.Count is 0)
+		{
+			await foreach (var unused in GetCustomFields(cancellationToken).ConfigureAwait(false))
+			{
+			}
+		}
+
+		return await GetCore<Document<TFields>>(id, cancellationToken).ConfigureAwait(false);
 	}
 
 	/// <inheritdoc />
@@ -96,7 +137,7 @@ public sealed class DocumentClient : IDocumentClient
 			content.Add(new StringContent(storagePath.ToString()), "storage_path");
 		}
 
-		foreach (var tag in document.TagIds)
+		foreach (var tag in document.TagIds ?? Array.Empty<int>())
 		{
 			content.Add(new StringContent(tag.ToString()), "tags");
 		}
@@ -106,7 +147,7 @@ public sealed class DocumentClient : IDocumentClient
 			content.Add(new StringContent(archiveSerialNumber.ToString()), "archive_serial_number");
 		}
 
-		var response = await _httpClient.PostAsync("/api/documents/post_document/", content).ConfigureAwait(false);
+		using var response = await _httpClient.PostAsync("/api/documents/post_document/", content).ConfigureAwait(false);
 		await response.EnsureSuccessStatusCodeAsync().ConfigureAwait(false);
 
 		// Until v1.9.2 paperless did not return the document import task id,
@@ -117,7 +158,7 @@ public sealed class DocumentClient : IDocumentClient
 			return new ImportStarted();
 		}
 
-		var id = await response.Content.ReadFromJsonAsync(_context.Guid).ConfigureAwait(false);
+		var id = await response.Content.ReadFromJsonAsync(_options.GetTypeInfo<Guid>()).ConfigureAwait(false);
 		var task = await _taskClient.Get(id).ConfigureAwait(false);
 
 		while (task is not null && !task.Status.IsCompleted)
@@ -138,5 +179,93 @@ public sealed class DocumentClient : IDocumentClient
 
 			_ => throw new ArgumentOutOfRangeException(nameof(task.Status), task.Status, "Unexpected task result"),
 		};
+	}
+
+	/// <inheritdoc />
+	public Task<Document> Update(int id, DocumentUpdate document)
+	{
+		return UpdateCore<Document, DocumentUpdate>(id, document);
+	}
+
+	/// <inheritdoc />
+	public async Task<Document<TFields>> Update<TFields>(int id, DocumentUpdate<TFields> document)
+	{
+		if (_paperlessOptions.CustomFields.Count is 0)
+		{
+			await foreach (var unused in GetCustomFields().ConfigureAwait(false))
+			{
+			}
+		}
+
+		return await UpdateCore<Document<TFields>, DocumentUpdate<TFields>>(id, document).ConfigureAwait(false);
+	}
+
+	/// <inheritdoc />
+	public IAsyncEnumerable<CustomField> GetCustomFields(CancellationToken cancellationToken = default)
+	{
+		return GetCustomFieldsCore($"/api/custom_fields/", cancellationToken);
+	}
+
+	/// <inheritdoc />
+	public IAsyncEnumerable<CustomField> GetCustomFields(int pageSize, CancellationToken cancellationToken = default)
+	{
+		return GetCustomFieldsCore($"/api/custom_fields/?page_size={pageSize}", cancellationToken);
+	}
+
+	/// <inheritdoc />
+	public async Task<CustomField> CreateCustomField(CustomFieldCreation field)
+	{
+		using var response = await _httpClient
+			.PostAsJsonAsync("/api/custom_fields/", field, _options.GetTypeInfo<CustomFieldCreation>())
+			.ConfigureAwait(false);
+
+		await response.EnsureSuccessStatusCodeAsync().ConfigureAwait(false);
+
+		var createdField = (await response.Content.ReadFromJsonAsync(_options.GetTypeInfo<CustomField>()).ConfigureAwait(false))!;
+		_paperlessOptions.CustomFields.AddOrUpdate(createdField.Id, createdField, (_, _) => createdField);
+
+		return createdField;
+	}
+
+	private IAsyncEnumerable<TDocument> GetAllCore<TDocument>(string requestUri, CancellationToken cancellationToken)
+		where TDocument : Document
+	{
+		return _httpClient.GetPaginated(
+			requestUri,
+			_options.GetTypeInfo<PaginatedList<TDocument>>(),
+			cancellationToken);
+	}
+
+	private Task<TDocument?> GetCore<TDocument>(int id, CancellationToken cancellationToken)
+		where TDocument : Document
+	{
+		return _httpClient.GetFromJsonAsync(
+			$"/api/documents/{id}/",
+			_options.GetTypeInfo<TDocument>(),
+			cancellationToken);
+	}
+
+	private async Task<TDocument> UpdateCore<TDocument, TUpdate>(int id, TUpdate update)
+		where TDocument : Document
+		where TUpdate : DocumentUpdate
+	{
+		using var response = await _httpClient
+			.PatchAsJsonAsync($"/api/documents/{id}/", update, _options.GetTypeInfo<TUpdate>())
+			.ConfigureAwait(false);
+
+		await response.EnsureSuccessStatusCodeAsync().ConfigureAwait(false);
+
+		return (await response.Content.ReadFromJsonAsync(_options.GetTypeInfo<TDocument>()).ConfigureAwait(false))!;
+	}
+
+	private async IAsyncEnumerable<CustomField> GetCustomFieldsCore(string requestUri, [EnumeratorCancellation] CancellationToken cancellationToken)
+	{
+		var fields = _httpClient.GetPaginated(requestUri, _options.GetTypeInfo<PaginatedList<CustomField>>(), cancellationToken);
+
+		await foreach (var field in fields.ConfigureAwait(false))
+		{
+			_paperlessOptions.CustomFields.AddOrUpdate(field.Id, field, (_, _) => field);
+			yield return field;
+		}
 	}
 }

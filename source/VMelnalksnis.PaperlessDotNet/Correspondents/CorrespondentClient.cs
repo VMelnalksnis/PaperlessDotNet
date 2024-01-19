@@ -5,7 +5,6 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Json;
-using System.Text;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
@@ -18,7 +17,7 @@ namespace VMelnalksnis.PaperlessDotNet.Correspondents;
 public sealed class CorrespondentClient : ICorrespondentClient
 {
 	private readonly HttpClient _httpClient;
-	private readonly PaperlessJsonSerializerContext _context;
+	private readonly JsonSerializerOptions _options;
 
 	/// <summary>Initializes a new instance of the <see cref="CorrespondentClient"/> class.</summary>
 	/// <param name="httpClient">Http client configured for making requests to the Paperless API.</param>
@@ -26,7 +25,7 @@ public sealed class CorrespondentClient : ICorrespondentClient
 	public CorrespondentClient(HttpClient httpClient, PaperlessJsonSerializerOptions serializerOptions)
 	{
 		_httpClient = httpClient;
-		_context = serializerOptions.Context;
+		_options = serializerOptions.Options;
 	}
 
 	/// <inheritdoc />
@@ -34,7 +33,7 @@ public sealed class CorrespondentClient : ICorrespondentClient
 	{
 		return _httpClient.GetPaginated(
 			"/api/correspondents/",
-			_context.PaginatedListCorrespondent,
+			_options.GetTypeInfo<PaginatedList<Correspondent>>(),
 			cancellationToken);
 	}
 
@@ -43,7 +42,7 @@ public sealed class CorrespondentClient : ICorrespondentClient
 	{
 		return _httpClient.GetPaginated(
 			$"/api/correspondents/?page_size={pageSize}",
-			_context.PaginatedListCorrespondent,
+			_options.GetTypeInfo<PaginatedList<Correspondent>>(),
 			cancellationToken);
 	}
 
@@ -52,22 +51,19 @@ public sealed class CorrespondentClient : ICorrespondentClient
 	{
 		return _httpClient.GetFromJsonAsync(
 			$"/api/correspondents/{id}/",
-			_context.Correspondent,
+			_options.GetTypeInfo<Correspondent>(),
 			cancellationToken);
 	}
 
 	/// <inheritdoc />
 	public async Task<Correspondent> Create(CorrespondentCreation correspondent)
 	{
-		// PostAsJsonAsync sends chunked data, and does not set Content-Length;
-		// Paperless interprets missing Content-Length as 0, and thus ignores any content
-		// https://github.com/aspnet/AspNetWebStack/issues/252
-		var json = JsonSerializer.Serialize(correspondent, _context.CorrespondentCreation);
-		var content = new StringContent(json, Encoding.UTF8, "application/json");
-		var response = await _httpClient.PostAsync("/api/correspondents/", content).ConfigureAwait(false);
+		using var response = await _httpClient
+			.PostAsJsonAsync("/api/correspondents/", correspondent,  _options.GetTypeInfo<CorrespondentCreation>())
+			.ConfigureAwait(false);
 
 		await response.EnsureSuccessStatusCodeAsync().ConfigureAwait(false);
-		return (await response.Content.ReadFromJsonAsync(_context.Correspondent).ConfigureAwait(false))!;
+		return (await response.Content.ReadFromJsonAsync(_options.GetTypeInfo<Correspondent>()).ConfigureAwait(false))!;
 	}
 
 	/// <inheritdoc />
