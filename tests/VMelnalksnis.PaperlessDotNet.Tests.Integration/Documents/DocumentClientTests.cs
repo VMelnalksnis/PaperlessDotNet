@@ -12,58 +12,53 @@ using NodaTime;
 
 using VMelnalksnis.PaperlessDotNet.Documents;
 
-using Xunit.Abstractions;
-
 namespace VMelnalksnis.PaperlessDotNet.Tests.Integration.Documents;
 
-[Collection("Paperless")]
-public sealed class DocumentClientTests
+public sealed class DocumentClientTests(PaperlessFixture paperlessFixture) : PaperlessTests(paperlessFixture)
 {
-	private readonly IPaperlessClient _paperlessClient;
-	private readonly IClock _clock;
-
-	public DocumentClientTests(ITestOutputHelper testOutputHelper, PaperlessFixture paperlessFixture)
-	{
-		_paperlessClient = paperlessFixture.GetPaperlessClient(testOutputHelper);
-		_clock = paperlessFixture.Clock;
-	}
-
-	[Fact]
+	[Test]
+	[Order(1)]
 	public async Task GetAll_ShouldReturnExpected()
 	{
-		var documents = await _paperlessClient.Documents.GetAll().ToListAsync();
+		var documents = await Client.Documents.GetAll().ToListAsync();
 
 		documents.Should().BeEmpty();
 	}
 
-	[Fact]
+	[Test]
 	public async Task GetAll_PageSizeShouldNotChangeResult()
 	{
-		var documents = await _paperlessClient.Documents.GetAll().ToListAsync();
-		var pageSizeDocuments = await _paperlessClient.Documents.GetAll(1).ToListAsync();
+		var documents = await Client.Documents.GetAll().ToListAsync();
+		var pageSizeDocuments = await Client.Documents.GetAll(1).ToListAsync();
 
 		documents.Should().BeEquivalentTo(pageSizeDocuments);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Create()
 	{
 		const string documentName = "Lorem Ipsum.txt";
 
-		var correspondent = await _paperlessClient.Correspondents.Create(new("Foo"));
+		var correspondent = await Client.Correspondents.Create(new("Foo"));
 		await using var documentStream = typeof(DocumentClientTests).GetResource(documentName);
 		var documentCreation = new DocumentCreation(documentStream, documentName)
 		{
-			Created = _clock.GetCurrentInstant(),
+			Created = Clock.GetCurrentInstant(),
 			Title = "Lorem Ipsum",
 			CorrespondentId = correspondent.Id,
 			ArchiveSerialNumber = 1,
 		};
 
-		var result = await _paperlessClient.Documents.Create(documentCreation);
+		var result = await Client.Documents.Create(documentCreation);
+
+		if (Fixture.Name.StartsWith("1.9.2"))
+		{
+			result.Should().BeOfType<ImportStarted>();
+			return;
+		}
 
 		var id = result.Should().BeOfType<DocumentCreated>().Subject.Id;
-		var document = (await _paperlessClient.Documents.Get(id))!;
+		var document = (await Client.Documents.Get(id))!;
 
 		using var scope = new AssertionScope();
 
@@ -84,6 +79,6 @@ public sealed class DocumentClientTests
 		document.Content.Replace("\n", Environment.NewLine).Replace("\r\n", Environment.NewLine).Should().Be(content);
 #endif
 
-		await _paperlessClient.Correspondents.Delete(correspondent.Id);
+		await Client.Correspondents.Delete(correspondent.Id);
 	}
 }

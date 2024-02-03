@@ -16,12 +16,12 @@ using VMelnalksnis.PaperlessDotNet.Tasks;
 
 namespace VMelnalksnis.PaperlessDotNet.Tests.Integration;
 
-[Collection("Paperless")]
-public sealed class MinimalExampleTests
+public sealed class MinimalExampleTests : PaperlessTests
 {
 	private readonly IPaperlessClient _paperlessClient;
 
 	public MinimalExampleTests(PaperlessFixture paperlessFixture)
+		: base(paperlessFixture)
 	{
 		var options = paperlessFixture.Options;
 
@@ -37,7 +37,7 @@ public sealed class MinimalExampleTests
 		_paperlessClient = new PaperlessClient(correspondentClient, documentClient);
 	}
 
-	[Fact]
+	[Test]
 	public async Task ShouldNotThrow()
 	{
 		await FluentActions
