@@ -44,7 +44,7 @@ public sealed class DocumentClient : IDocumentClient
 	/// <inheritdoc />
 	public IAsyncEnumerable<Document> GetAll(CancellationToken cancellationToken = default)
 	{
-		return GetAllCore<Document>("/api/documents/", cancellationToken);
+		return GetAllCore<Document>(Routes.Documents.Uri, cancellationToken);
 	}
 
 	/// <inheritdoc />
@@ -57,7 +57,7 @@ public sealed class DocumentClient : IDocumentClient
 			}
 		}
 
-		var documents = GetAllCore<Document<TFields>>("/api/documents/", cancellationToken);
+		var documents = GetAllCore<Document<TFields>>(Routes.Documents.Uri, cancellationToken);
 		await foreach (var document in documents.ConfigureAwait(false))
 		{
 			yield return document;
@@ -67,7 +67,7 @@ public sealed class DocumentClient : IDocumentClient
 	/// <inheritdoc />
 	public IAsyncEnumerable<Document> GetAll(int pageSize, CancellationToken cancellationToken = default)
 	{
-		return GetAllCore<Document>($"/api/documents/?page_size={pageSize}", cancellationToken);
+		return GetAllCore<Document>(Routes.Documents.PagedUri(pageSize), cancellationToken);
 	}
 
 	/// <inheritdoc />
@@ -80,7 +80,7 @@ public sealed class DocumentClient : IDocumentClient
 			}
 		}
 
-		var documents = GetAllCore<Document<TFields>>($"/api/documents/?page_size={pageSize}", cancellationToken);
+		var documents = GetAllCore<Document<TFields>>(Routes.Documents.PagedUri(pageSize), cancellationToken);
 		await foreach (var document in documents.ConfigureAwait(false))
 		{
 			yield return document;
@@ -147,7 +147,7 @@ public sealed class DocumentClient : IDocumentClient
 			content.Add(new StringContent(archiveSerialNumber.ToString()), "archive_serial_number");
 		}
 
-		using var response = await _httpClient.PostAsync("/api/documents/post_document/", content).ConfigureAwait(false);
+		using var response = await _httpClient.PostAsync(Routes.Documents.CreateUri, content).ConfigureAwait(false);
 		await response.EnsureSuccessStatusCodeAsync().ConfigureAwait(false);
 
 		// Until v1.9.2 paperless did not return the document import task id,
@@ -203,20 +203,20 @@ public sealed class DocumentClient : IDocumentClient
 	/// <inheritdoc />
 	public IAsyncEnumerable<CustomField> GetCustomFields(CancellationToken cancellationToken = default)
 	{
-		return GetCustomFieldsCore($"/api/custom_fields/", cancellationToken);
+		return GetCustomFieldsCore(Routes.CustomFields.Uri, cancellationToken);
 	}
 
 	/// <inheritdoc />
 	public IAsyncEnumerable<CustomField> GetCustomFields(int pageSize, CancellationToken cancellationToken = default)
 	{
-		return GetCustomFieldsCore($"/api/custom_fields/?page_size={pageSize}", cancellationToken);
+		return GetCustomFieldsCore(Routes.CustomFields.PagedUri(pageSize), cancellationToken);
 	}
 
 	/// <inheritdoc />
 	public async Task<CustomField> CreateCustomField(CustomFieldCreation field)
 	{
 		using var response = await _httpClient
-			.PostAsJsonAsync("/api/custom_fields/", field, _options.GetTypeInfo<CustomFieldCreation>())
+			.PostAsJsonAsync(Routes.CustomFields.Uri, field, _options.GetTypeInfo<CustomFieldCreation>())
 			.ConfigureAwait(false);
 
 		await response.EnsureSuccessStatusCodeAsync().ConfigureAwait(false);
@@ -227,7 +227,7 @@ public sealed class DocumentClient : IDocumentClient
 		return createdField;
 	}
 
-	private IAsyncEnumerable<TDocument> GetAllCore<TDocument>(string requestUri, CancellationToken cancellationToken)
+	private IAsyncEnumerable<TDocument> GetAllCore<TDocument>(Uri requestUri, CancellationToken cancellationToken)
 		where TDocument : Document
 	{
 		return _httpClient.GetPaginated(
@@ -240,7 +240,7 @@ public sealed class DocumentClient : IDocumentClient
 		where TDocument : Document
 	{
 		return _httpClient.GetFromJsonAsync(
-			$"/api/documents/{id}/",
+			Routes.Documents.IdUri(id),
 			_options.GetTypeInfo<TDocument>(),
 			cancellationToken);
 	}
@@ -250,7 +250,7 @@ public sealed class DocumentClient : IDocumentClient
 		where TUpdate : DocumentUpdate
 	{
 		using var response = await _httpClient
-			.PatchAsJsonAsync($"/api/documents/{id}/", update, _options.GetTypeInfo<TUpdate>())
+			.PatchAsJsonAsync(Routes.Documents.IdUri(id), update, _options.GetTypeInfo<TUpdate>())
 			.ConfigureAwait(false);
 
 		await response.EnsureSuccessStatusCodeAsync().ConfigureAwait(false);
@@ -258,7 +258,7 @@ public sealed class DocumentClient : IDocumentClient
 		return (await response.Content.ReadFromJsonAsync(_options.GetTypeInfo<TDocument>()).ConfigureAwait(false))!;
 	}
 
-	private async IAsyncEnumerable<CustomField> GetCustomFieldsCore(string requestUri, [EnumeratorCancellation] CancellationToken cancellationToken)
+	private async IAsyncEnumerable<CustomField> GetCustomFieldsCore(Uri requestUri, [EnumeratorCancellation] CancellationToken cancellationToken)
 	{
 		var fields = _httpClient.GetPaginated(requestUri, _options.GetTypeInfo<PaginatedList<CustomField>>(), cancellationToken);
 

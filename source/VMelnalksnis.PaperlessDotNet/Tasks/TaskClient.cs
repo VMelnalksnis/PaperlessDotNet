@@ -33,14 +33,14 @@ public sealed class TaskClient : ITaskClient
 	/// <inheritdoc />
 	public Task<List<PaperlessTask>> GetAll(CancellationToken cancellationToken = default)
 	{
-		return _httpClient.GetFromJsonAsync("/api/tasks/", _options.GetTypeInfo<List<PaperlessTask>>(), cancellationToken)!;
+		return _httpClient.GetFromJsonAsync(Routes.Tasks.Uri, _options.GetTypeInfo<List<PaperlessTask>>(), cancellationToken)!;
 	}
 
 	/// <inheritdoc />
 	public async Task<PaperlessTask?> Get(Guid taskId, CancellationToken cancellationToken = default)
 	{
 		var tasks = await _httpClient
-			.GetFromJsonAsync($"/api/tasks/?task_id={taskId}", _options.GetTypeInfo<List<PaperlessTask>>(), cancellationToken)
+			.GetFromJsonAsync(Routes.Tasks.IdUri(taskId), _options.GetTypeInfo<List<PaperlessTask>>(), cancellationToken)
 			.ConfigureAwait(false);
 
 		return tasks?.SingleOrDefault();

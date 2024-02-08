@@ -2,6 +2,7 @@
 // Licensed under the Apache License 2.0.
 // See LICENSE file in the project root for full license information.
 
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -18,12 +19,12 @@ internal static class HttpClientExtensions
 {
 	internal static async IAsyncEnumerable<TResult> GetPaginated<TResult>(
 		this HttpClient httpClient,
-		string requestUri,
+		Uri requestUri,
 		JsonTypeInfo<PaginatedList<TResult>> typeInfo,
 		[EnumeratorCancellation] CancellationToken cancellationToken)
 		where TResult : class
 	{
-		var next = requestUri;
+		var next = requestUri.OriginalString;
 		while (next is not null && !cancellationToken.IsCancellationRequested)
 		{
 			var paginatedList = await httpClient.GetFromJsonAsync(next, typeInfo, cancellationToken).ConfigureAwait(false);
@@ -43,7 +44,7 @@ internal static class HttpClientExtensions
 
 	internal static async Task<TResponse> PostAsJsonAsync<TRequest, TResponse>(
 		this HttpClient httpClient,
-		string requestUri,
+		Uri requestUri,
 		TRequest request,
 		JsonTypeInfo<TRequest> requestTypeInfo,
 		JsonTypeInfo<TResponse> responseTypeInfo)
@@ -58,7 +59,7 @@ internal static class HttpClientExtensions
 
 	internal static Task<HttpResponseMessage> PostAsJsonAsync<TValue>(
 		this HttpClient httpClient,
-		string requestUri,
+		Uri requestUri,
 		TValue value,
 		JsonTypeInfo<TValue> typeInfo)
 	{
@@ -72,7 +73,7 @@ internal static class HttpClientExtensions
 
 	internal static Task<HttpResponseMessage> PatchAsJsonAsync<TValue>(
 		this HttpClient httpClient,
-		string requestUri,
+		Uri requestUri,
 		TValue value,
 		JsonTypeInfo<TValue> typeInfo)
 	{

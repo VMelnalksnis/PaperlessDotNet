@@ -2,6 +2,7 @@
 // Licensed under the Apache License 2.0.
 // See LICENSE file in the project root for full license information.
 
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -31,26 +32,20 @@ public sealed class CorrespondentClient : ICorrespondentClient
 	/// <inheritdoc />
 	public IAsyncEnumerable<Correspondent> GetAll(CancellationToken cancellationToken = default)
 	{
-		return _httpClient.GetPaginated(
-			"/api/correspondents/",
-			_options.GetTypeInfo<PaginatedList<Correspondent>>(),
-			cancellationToken);
+		return GetAllCore(Routes.Correspondents.Uri, cancellationToken);
 	}
 
 	/// <inheritdoc />
 	public IAsyncEnumerable<Correspondent> GetAll(int pageSize, CancellationToken cancellationToken = default)
 	{
-		return _httpClient.GetPaginated(
-			$"/api/correspondents/?page_size={pageSize}",
-			_options.GetTypeInfo<PaginatedList<Correspondent>>(),
-			cancellationToken);
+		return GetAllCore(Routes.Correspondents.PagedUri(pageSize), cancellationToken);
 	}
 
 	/// <inheritdoc />
 	public Task<Correspondent?> Get(int id, CancellationToken cancellationToken = default)
 	{
 		return _httpClient.GetFromJsonAsync(
-			$"/api/correspondents/{id}/",
+			Routes.Correspondents.IdUri(id),
 			_options.GetTypeInfo<Correspondent>(),
 			cancellationToken);
 	}
@@ -59,7 +54,7 @@ public sealed class CorrespondentClient : ICorrespondentClient
 	public Task<Correspondent> Create(CorrespondentCreation correspondent)
 	{
 		return _httpClient.PostAsJsonAsync(
-			"/api/correspondents/",
+			Routes.Correspondents.Uri,
 			correspondent,
 			_options.GetTypeInfo<CorrespondentCreation>(),
 			_options.GetTypeInfo<Correspondent>());
@@ -68,7 +63,15 @@ public sealed class CorrespondentClient : ICorrespondentClient
 	/// <inheritdoc />
 	public async Task Delete(int id)
 	{
-		using var response = await _httpClient.DeleteAsync($"/api/correspondents/{id}/").ConfigureAwait(false);
+		using var response = await _httpClient.DeleteAsync(Routes.Correspondents.IdUri(id)).ConfigureAwait(false);
 		await response.EnsureSuccessStatusCodeAsync().ConfigureAwait(false);
+	}
+
+	private IAsyncEnumerable<Correspondent> GetAllCore(Uri requestUri, CancellationToken cancellationToken)
+	{
+		return _httpClient.GetPaginated(
+			requestUri,
+			_options.GetTypeInfo<PaginatedList<Correspondent>>(),
+			cancellationToken);
 	}
 }

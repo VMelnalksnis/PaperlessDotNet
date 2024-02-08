@@ -2,6 +2,7 @@
 // Licensed under the Apache License 2.0.
 // See LICENSE file in the project root for full license information.
 
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -31,20 +32,20 @@ public sealed class TagClient : ITagClient
 	/// <inheritdoc />
 	public IAsyncEnumerable<Tag> GetAll(CancellationToken cancellationToken = default)
 	{
-		return GetAllCore("/api/tags/", cancellationToken);
+		return GetAllCore(Routes.Tags.Uri, cancellationToken);
 	}
 
 	/// <inheritdoc />
 	public IAsyncEnumerable<Tag> GetAll(int pageSize, CancellationToken cancellationToken = default)
 	{
-		return GetAllCore($"/api/tags/?page_size={pageSize}", cancellationToken);
+		return GetAllCore(Routes.Tags.PagedUri(pageSize), cancellationToken);
 	}
 
 	/// <inheritdoc />
 	public Task<Tag?> Get(int id, CancellationToken cancellationToken = default)
 	{
 		return _httpClient.GetFromJsonAsync(
-			$"/api/tags/{id}/",
+			Routes.Tags.IdUri(id),
 			_options.GetTypeInfo<Tag>(),
 			cancellationToken);
 	}
@@ -53,7 +54,7 @@ public sealed class TagClient : ITagClient
 	public Task<Tag> Create(TagCreation tag)
 	{
 		return _httpClient.PostAsJsonAsync(
-			"/api/tags/",
+			Routes.Tags.Uri,
 			tag,
 			_options.GetTypeInfo<TagCreation>(),
 			_options.GetTypeInfo<Tag>());
@@ -62,11 +63,11 @@ public sealed class TagClient : ITagClient
 	/// <inheritdoc />
 	public async Task Delete(int id)
 	{
-		using var response = await _httpClient.DeleteAsync($"/api/tags/{id}/").ConfigureAwait(false);
+		using var response = await _httpClient.DeleteAsync(Routes.Tags.IdUri(id)).ConfigureAwait(false);
 		await response.EnsureSuccessStatusCodeAsync().ConfigureAwait(false);
 	}
 
-	private IAsyncEnumerable<Tag> GetAllCore(string requestUri, CancellationToken cancellationToken)
+	private IAsyncEnumerable<Tag> GetAllCore(Uri requestUri, CancellationToken cancellationToken)
 	{
 		return _httpClient.GetPaginated(
 			requestUri,
