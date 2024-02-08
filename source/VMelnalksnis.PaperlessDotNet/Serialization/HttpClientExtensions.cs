@@ -41,6 +41,21 @@ internal static class HttpClientExtensions
 		}
 	}
 
+	internal static async Task<TResponse> PostAsJsonAsync<TRequest, TResponse>(
+		this HttpClient httpClient,
+		string requestUri,
+		TRequest request,
+		JsonTypeInfo<TRequest> requestTypeInfo,
+		JsonTypeInfo<TResponse> responseTypeInfo)
+	{
+		using var response = await httpClient
+			.PostAsJsonAsync(requestUri, request,  requestTypeInfo)
+			.ConfigureAwait(false);
+
+		await response.EnsureSuccessStatusCodeAsync().ConfigureAwait(false);
+		return (await response.Content.ReadFromJsonAsync(responseTypeInfo).ConfigureAwait(false))!;
+	}
+
 	internal static Task<HttpResponseMessage> PostAsJsonAsync<TValue>(
 		this HttpClient httpClient,
 		string requestUri,

@@ -4,6 +4,7 @@
 
 using VMelnalksnis.PaperlessDotNet.Correspondents;
 using VMelnalksnis.PaperlessDotNet.Documents;
+using VMelnalksnis.PaperlessDotNet.Tags;
 
 namespace VMelnalksnis.PaperlessDotNet;
 
@@ -13,10 +14,12 @@ public sealed class PaperlessClient : IPaperlessClient
 	/// <summary>Initializes a new instance of the <see cref="PaperlessClient"/> class.</summary>
 	/// <param name="correspondents">Correspondents API client.</param>
 	/// <param name="documents">Documents API client.</param>
-	public PaperlessClient(ICorrespondentClient correspondents, IDocumentClient documents)
+	/// <param name="tags">Tags API client.</param>
+	public PaperlessClient(ICorrespondentClient correspondents, IDocumentClient documents, ITagClient tags)
 	{
 		Correspondents = correspondents;
 		Documents = documents;
+		Tags = tags;
 	}
 
 	/// <inheritdoc />
@@ -24,4 +27,7 @@ public sealed class PaperlessClient : IPaperlessClient
 
 	/// <inheritdoc />
 	public IDocumentClient Documents { get; }
+
+	/// <inheritdoc />
+	public ITagClient Tags { get; }
 }

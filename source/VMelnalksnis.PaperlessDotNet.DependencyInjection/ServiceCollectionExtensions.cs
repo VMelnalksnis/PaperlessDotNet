@@ -17,6 +17,7 @@ using NodaTime;
 using VMelnalksnis.PaperlessDotNet.Correspondents;
 using VMelnalksnis.PaperlessDotNet.Documents;
 using VMelnalksnis.PaperlessDotNet.Serialization;
+using VMelnalksnis.PaperlessDotNet.Tags;
 using VMelnalksnis.PaperlessDotNet.Tasks;
 
 #if NET6_0_OR_GREATER
@@ -83,6 +84,12 @@ public static class ServiceCollectionExtensions
 				var options = provider.GetRequiredService<PaperlessJsonSerializerOptions>();
 				var taskClient = provider.GetRequiredService<ITaskClient>();
 				return new(httpClient, options, taskClient);
+			})
+			.AddScoped<ITagClient, TagClient>(provider =>
+			{
+				var httpClient = provider.GetRequiredService<IHttpClientFactory>().CreateClient(PaperlessOptions.Name);
+				var options = provider.GetRequiredService<PaperlessJsonSerializerOptions>();
+				return new(httpClient, options);
 			})
 			.AddHttpClient(PaperlessOptions.Name, (provider, client) =>
 			{

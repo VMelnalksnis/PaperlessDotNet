@@ -12,6 +12,7 @@ using NodaTime;
 using VMelnalksnis.PaperlessDotNet.Correspondents;
 using VMelnalksnis.PaperlessDotNet.Documents;
 using VMelnalksnis.PaperlessDotNet.Serialization;
+using VMelnalksnis.PaperlessDotNet.Tags;
 using VMelnalksnis.PaperlessDotNet.Tasks;
 
 namespace VMelnalksnis.PaperlessDotNet.Tests.Integration;
@@ -33,8 +34,9 @@ public sealed class MinimalExampleTests : PaperlessTests
 		var taskClient = new TaskClient(httpClient, serializerOptions);
 		var correspondentClient = new CorrespondentClient(httpClient, serializerOptions);
 		var documentClient = new DocumentClient(httpClient, serializerOptions, taskClient);
+		var tagClient = new TagClient(httpClient, serializerOptions);
 
-		_paperlessClient = new PaperlessClient(correspondentClient, documentClient);
+		_paperlessClient = new PaperlessClient(correspondentClient, documentClient, tagClient);
 	}
 
 	[Test]

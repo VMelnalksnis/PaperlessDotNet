@@ -3,12 +3,14 @@
 // See LICENSE file in the project root for full license information.
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 using NodaTime;
 
 using VMelnalksnis.PaperlessDotNet.Documents;
+using VMelnalksnis.PaperlessDotNet.Tags;
 
 namespace VMelnalksnis.PaperlessDotNet.Tests.Integration.Documents;
 
@@ -38,6 +40,12 @@ public sealed class DocumentClientTests(PaperlessFixture paperlessFixture) : Pap
 		const string documentName = "Lorem Ipsum.txt";
 
 		var correspondent = await Client.Correspondents.Create(new("Foo"));
+		var tags = new List<Tag>();
+		foreach (var tag in new List<TagCreation> { new("Receipt"), new("Bill") })
+		{
+			tags.Add(await Client.Tags.Create(tag));
+		}
+
 		await using var documentStream = typeof(DocumentClientTests).GetResource(documentName);
 		var documentCreation = new DocumentCreation(documentStream, documentName)
 		{
@@ -45,6 +53,7 @@ public sealed class DocumentClientTests(PaperlessFixture paperlessFixture) : Pap
 			Title = "Lorem Ipsum",
 			CorrespondentId = correspondent.Id,
 			ArchiveSerialNumber = 1,
+			TagIds = tags.Select(tag => tag.Id).ToArray(),
 		};
 
 		var result = await Client.Documents.Create(documentCreation);
@@ -73,6 +82,7 @@ public sealed class DocumentClientTests(PaperlessFixture paperlessFixture) : Pap
 		document.Title.Should().Be(documentCreation.Title);
 		document.ArchiveSerialNumber.Should().Be(documentCreation.ArchiveSerialNumber);
 		document.CorrespondentId.Should().Be(documentCreation.CorrespondentId);
+		document.TagIds.Should().BeEquivalentTo(tags.Select(tag => tag.Id));
 #if NET6_0_OR_GREATER
 		document.Content.ReplaceLineEndings().Should().BeEquivalentTo(content);
 #else
@@ -85,6 +95,10 @@ public sealed class DocumentClientTests(PaperlessFixture paperlessFixture) : Pap
 		updatedDocument.Title.Should().Be(update.Title);
 
 		await Client.Correspondents.Delete(correspondent.Id);
+		foreach (var tag in tags)
+		{
+			await Client.Tags.Delete(tag.Id);
+		}
 	}
 
 	[Test]

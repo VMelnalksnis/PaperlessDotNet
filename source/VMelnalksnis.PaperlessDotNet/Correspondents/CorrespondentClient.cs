@@ -56,20 +56,19 @@ public sealed class CorrespondentClient : ICorrespondentClient
 	}
 
 	/// <inheritdoc />
-	public async Task<Correspondent> Create(CorrespondentCreation correspondent)
+	public Task<Correspondent> Create(CorrespondentCreation correspondent)
 	{
-		using var response = await _httpClient
-			.PostAsJsonAsync("/api/correspondents/", correspondent,  _options.GetTypeInfo<CorrespondentCreation>())
-			.ConfigureAwait(false);
-
-		await response.EnsureSuccessStatusCodeAsync().ConfigureAwait(false);
-		return (await response.Content.ReadFromJsonAsync(_options.GetTypeInfo<Correspondent>()).ConfigureAwait(false))!;
+		return _httpClient.PostAsJsonAsync(
+			"/api/correspondents/",
+			correspondent,
+			_options.GetTypeInfo<CorrespondentCreation>(),
+			_options.GetTypeInfo<Correspondent>());
 	}
 
 	/// <inheritdoc />
 	public async Task Delete(int id)
 	{
-		var response = await _httpClient.DeleteAsync($"/api/correspondents/{id}/").ConfigureAwait(false);
+		using var response = await _httpClient.DeleteAsync($"/api/correspondents/{id}/").ConfigureAwait(false);
 		await response.EnsureSuccessStatusCodeAsync().ConfigureAwait(false);
 	}
 }
