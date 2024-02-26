@@ -48,7 +48,7 @@ jobs:
 
       - name: Gather Code Coverage
         if: github.event.schedule == null
-        uses: codecov/codecov-action@v4.0.1
+        uses: codecov/codecov-action@v4.0.2
         with:
           fail_ci_if_error: true
           token: ${{ secrets.CODECOV_TOKEN }}
