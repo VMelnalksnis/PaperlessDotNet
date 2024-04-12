@@ -107,7 +107,7 @@ public sealed class DocumentClient : IDocumentClient
 	}
 
 	/// <inheritdoc />
-	public async Task<DocumentCreationResult> Create(DocumentCreation document)
+	public async Task<DocumentCreationResult> Create(DocumentCreation document, int taskStatusPollingDelay = 100)
 	{
 		var content = new MultipartFormDataContent();
 		content.Add(new StreamContent(document.Document), "document", document.FileName);
@@ -163,7 +163,7 @@ public sealed class DocumentClient : IDocumentClient
 
 		while (task is not null && !task.Status.IsCompleted)
 		{
-			await Task.Delay(100).ConfigureAwait(false);
+			await Task.Delay(taskStatusPollingDelay).ConfigureAwait(false);
 			task = await _taskClient.Get(id).ConfigureAwait(false);
 		}
 
