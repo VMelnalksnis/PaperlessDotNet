@@ -26,6 +26,7 @@ public sealed class DocumentClient : IDocumentClient
 
 	private readonly HttpClient _httpClient;
 	private readonly ITaskClient _taskClient;
+	private readonly TimeSpan _taskPollingDelay;
 	private readonly JsonSerializerOptions _options;
 	private readonly PaperlessJsonSerializerOptions _paperlessOptions;
 
@@ -33,10 +34,12 @@ public sealed class DocumentClient : IDocumentClient
 	/// <param name="httpClient">Http client configured for making requests to the Paperless API.</param>
 	/// <param name="serializerOptions">Paperless specific instance of <see cref="JsonSerializerOptions"/>.</param>
 	/// <param name="taskClient">Paperless task API client.</param>
-	public DocumentClient(HttpClient httpClient, PaperlessJsonSerializerOptions serializerOptions, ITaskClient taskClient)
+	/// <param name="taskPollingDelay">The delay in ms between polling for import task completion.</param>
+	public DocumentClient(HttpClient httpClient, PaperlessJsonSerializerOptions serializerOptions, ITaskClient taskClient, TimeSpan taskPollingDelay)
 	{
 		_httpClient = httpClient;
 		_taskClient = taskClient;
+		_taskPollingDelay = taskPollingDelay;
 		_options = serializerOptions.Options;
 		_paperlessOptions = serializerOptions;
 	}
@@ -107,7 +110,7 @@ public sealed class DocumentClient : IDocumentClient
 	}
 
 	/// <inheritdoc />
-	public async Task<DocumentCreationResult> Create(DocumentCreation document, int taskStatusPollingDelay = 100)
+	public async Task<DocumentCreationResult> Create(DocumentCreation document)
 	{
 		var content = new MultipartFormDataContent();
 		content.Add(new StreamContent(document.Document), "document", document.FileName);
@@ -163,7 +166,7 @@ public sealed class DocumentClient : IDocumentClient
 
 		while (task is not null && !task.Status.IsCompleted)
 		{
-			await Task.Delay(taskStatusPollingDelay).ConfigureAwait(false);
+			await Task.Delay(_taskPollingDelay).ConfigureAwait(false);
 			task = await _taskClient.Get(id).ConfigureAwait(false);
 		}
 

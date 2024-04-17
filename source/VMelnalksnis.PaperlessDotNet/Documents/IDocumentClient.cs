@@ -50,9 +50,8 @@ public interface IDocumentClient
 
 	/// <summary>Creates a new document.</summary>
 	/// <param name="document">The document to create.</param>
-	/// <param name="taskStatusPollingDelay">Delay in ms when polling for the import result</param>
 	/// <returns>Result of creating the document.</returns>
-	Task<DocumentCreationResult> Create(DocumentCreation document, int taskStatusPollingDelay = 100);
+	Task<DocumentCreationResult> Create(DocumentCreation document);
 
 	/// <summary>Updates an existing document.</summary>
 	/// <param name="id">The id of the document to update.</param>

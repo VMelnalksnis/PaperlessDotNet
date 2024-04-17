@@ -5,7 +5,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace VMelnalksnis.PaperlessDotNet.DependencyInjection;
+namespace VMelnalksnis.PaperlessDotNet;
 
 /// <summary>Options for configuring <see cref="IPaperlessClient"/>.</summary>
 public sealed class PaperlessOptions
@@ -20,4 +20,8 @@ public sealed class PaperlessOptions
 	/// <summary>Gets the authentication token to use with all requests.</summary>
 	[Required]
 	public string Token { get; init; } = null!;
+
+	/// <summary> Gets the time delay between each polling of tasks in milliseconds.</summary>
+	[Required]
+	public TimeSpan TaskPollingDelay { get; init; } = TimeSpan.FromMilliseconds(100);
 }

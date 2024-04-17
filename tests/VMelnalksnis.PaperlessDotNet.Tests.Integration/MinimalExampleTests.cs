@@ -33,7 +33,7 @@ public sealed class MinimalExampleTests : PaperlessTests
 		var serializerOptions = new PaperlessJsonSerializerOptions(DateTimeZoneProviders.Tzdb);
 		var taskClient = new TaskClient(httpClient, serializerOptions);
 		var correspondentClient = new CorrespondentClient(httpClient, serializerOptions);
-		var documentClient = new DocumentClient(httpClient, serializerOptions, taskClient);
+		var documentClient = new DocumentClient(httpClient, serializerOptions, taskClient, options.TaskPollingDelay);
 		var tagClient = new TagClient(httpClient, serializerOptions);
 
 		_paperlessClient = new PaperlessClient(correspondentClient, documentClient, tagClient);
