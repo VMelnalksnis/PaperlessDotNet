@@ -83,8 +83,8 @@ public static class ServiceCollectionExtensions
 				var httpClient = provider.GetRequiredService<IHttpClientFactory>().CreateClient(PaperlessOptions.Name);
 				var options = provider.GetRequiredService<PaperlessJsonSerializerOptions>();
 				var taskClient = provider.GetRequiredService<ITaskClient>();
-				var paperlessOptions = provider.GetRequiredService<IOptions<PaperlessOptions>>();
-				return new(httpClient, options, taskClient, paperlessOptions.Value.TaskPollingDelay);
+				var paperlessOptions = provider.GetRequiredService<IOptionsMonitor<PaperlessOptions>>();
+				return new(httpClient, options, taskClient, paperlessOptions.CurrentValue.TaskPollingDelay);
 			})
 			.AddScoped<ITagClient, TagClient>(provider =>
 			{
