@@ -42,6 +42,7 @@ jobs:
           -m:8
           --configuration Release
           --no-build
+          --logger:"junit;LogFilePath=TestResults/test-result.junit.xml"
         env:
           Paperless__BaseAddress: 'https://localhost:5002/'
           Paperless__Token: 'token'
