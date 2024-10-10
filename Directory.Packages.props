@@ -1,6 +1,6 @@
 <Project>
 	<ItemGroup>
-		<PackageVersion Include="Ardalis.SmartEnum" Version="2.1.0"/>
+		<PackageVersion Include="Ardalis.SmartEnum" Version="8.1.0"/>
 		<PackageVersion Include="Ardalis.SmartEnum.SystemTextJson" Version="2.1.0"/>
 		<PackageVersion Include="coverlet.msbuild" Version="6.0.2"/>
 		<PackageVersion Include="DotNet.ReproducibleBuilds" Version="1.2.25"/>
