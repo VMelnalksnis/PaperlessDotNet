@@ -23,12 +23,12 @@ jobs:
     environment: Testing
 
     steps:
-      - uses: actions/checkout@v4.2.1
+      - uses: actions/checkout@v4.2.2
         if: ${{ startsWith(github.repository, 'VMelnalksnis/') }}
         with:
           ref: ${{ github.event.pull_request.head.sha }}
 
-      - uses: actions/checkout@v4.2.1
+      - uses: actions/checkout@v4.2.2
         if: ${{ !startsWith(github.repository, 'VMelnalksnis/') }}
 
       - uses: actions/setup-dotnet@v4.0.1
@@ -73,7 +73,7 @@ jobs:
     name: Resharper
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4.2.1
+      - uses: actions/checkout@v4.2.2
       - uses: actions/setup-dotnet@v4.0.1
       - run: dotnet restore
       - run: dotnet build --configuration Release --no-restore /warnAsError /nologo /clp:NoSummary
