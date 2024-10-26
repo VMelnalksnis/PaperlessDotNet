@@ -30,6 +30,7 @@
 	<ItemGroup>
 		<EmbeddedResource Include="Documents\Lorem Ipsum.txt" />
 		<EmbeddedResource Include="Documents\Lorem Ipsum 2.txt" />
+		<EmbeddedResource Include="Documents\Lorem Ipsum 3.txt" />
 	</ItemGroup>
 
 </Project>

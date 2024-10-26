@@ -41,6 +41,16 @@ internal static class Routes
 
 		internal static Uri IdUri(int id) => new($"{_documents}{id}/", Relative);
 
+		internal static Uri DownloadUri(int id) => new($"{_documents}{id}/download/", Relative);
+
+		internal static Uri DownloadOriginalUri(int id) => new($"{_documents}{id}/download/?original=true", Relative);
+
+		internal static Uri DownloadPreview(int id) => new($"{_documents}{id}/preview/", Relative);
+
+		internal static Uri DownloadOriginalPreview(int id) => new($"{_documents}{id}/preview/?original=true", Relative);
+
+		internal static Uri DownloadThumbnail(int id) => new($"{_documents}{id}/thumb/", Relative);
+
 		internal static Uri PagedUri(int pageSize) => new($"{_documents}?{_pageSize}={pageSize}", Relative);
 	}
 

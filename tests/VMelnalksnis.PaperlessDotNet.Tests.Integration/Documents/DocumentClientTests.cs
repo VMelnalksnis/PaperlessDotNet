@@ -4,11 +4,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 
 using NodaTime;
+
+using NUnit.Framework.Internal;
 
 using VMelnalksnis.PaperlessDotNet.Documents;
 using VMelnalksnis.PaperlessDotNet.Tags;
@@ -111,6 +114,62 @@ public sealed class DocumentClientTests(PaperlessFixture paperlessFixture) : Pap
 	}
 
 	[Test]
+	public async Task Download()
+	{
+		if (PaperlessVersion < new Version(2, 0))
+		{
+			Assert.Ignore($"Paperless v{PaperlessVersion} does not directly allow downloading documents.");
+		}
+
+		const string documentName = "Lorem Ipsum 3.txt";
+
+		await using var documentStream = typeof(DocumentClientTests).GetResource(documentName);
+		var documentCreation = new DocumentCreation(documentStream, documentName);
+
+		var createResult = await Client.Documents.Create(documentCreation);
+		var id = createResult.Should().BeOfType<DocumentCreated>().Subject.Id;
+
+		var expectedDocumentContent = await typeof(DocumentClientTests).ReadResource(documentName);
+		var expectedPartOfFileName = "Lorem Ipsum 3";
+
+		// Download
+		var documentDownload = await Client.Documents.Download(id);
+		documentDownload.MediaTypeHeaderValue.MediaType.Should().Be("text/plain");
+		documentDownload.ContentDisposition!.FileName.Should().Contain(expectedPartOfFileName);
+
+		var downloadContent = await ReadStreamContentAsString(documentDownload.Content);
+		downloadContent.Should().BeEquivalentTo(expectedDocumentContent);
+
+		// Download Original
+		var documentOriginalDownload = await Client.Documents.DownloadOriginal(id);
+		documentOriginalDownload.MediaTypeHeaderValue.MediaType.Should().Be("text/plain");
+		documentOriginalDownload.ContentDisposition!.FileName.Should().Contain(expectedPartOfFileName);
+
+		var downloadOriginalContent = await ReadStreamContentAsString(documentOriginalDownload.Content);
+		downloadOriginalContent.Should().BeEquivalentTo(expectedDocumentContent);
+
+		// Download Preview
+		var downloadPreview = await Client.Documents.DownloadPreview(id);
+		downloadPreview.MediaTypeHeaderValue.MediaType.Should().Be("text/plain");
+		downloadPreview.ContentDisposition!.FileName.Should().Contain(expectedPartOfFileName);
+
+		var downloadPreviewContent = await ReadStreamContentAsString(downloadPreview.Content);
+		downloadPreviewContent.Should().BeEquivalentTo(expectedDocumentContent);
+
+		// Download Preview Original
+		var downloadPreviewOriginal = await Client.Documents.DownloadPreview(id);
+		downloadPreviewOriginal.MediaTypeHeaderValue.MediaType.Should().Be("text/plain");
+		downloadPreviewOriginal.ContentDisposition!.FileName.Should().Contain(expectedPartOfFileName);
+
+		var downloadPreviewOrignalContent = await ReadStreamContentAsString(downloadPreviewOriginal.Content);
+		downloadPreviewOrignalContent.Should().BeEquivalentTo(expectedDocumentContent);
+
+		// Download thumbnail
+		var downloadThumbnail = await Client.Documents.DownloadThumbnail(id);
+		downloadThumbnail.MediaTypeHeaderValue.MediaType.Should().Be("image/webp");
+	}
+
+	[Test]
 	public async Task CustomFields()
 	{
 		if (PaperlessVersion < new Version(2, 0))
@@ -170,5 +229,15 @@ public sealed class DocumentClientTests(PaperlessFixture paperlessFixture) : Pap
 		SerializerOptions.CustomFields.Clear();
 		var documents = await Client.Documents.GetAll<CustomFields>().ToListAsync();
 		documents.Should().ContainSingle(d => d.Id == id).Which.Should().BeEquivalentTo(document);
+	}
+
+	private async Task<string> ReadStreamContentAsString(Stream stream)
+	{
+		await using (stream)
+		{
+			var reader = new StreamReader(stream);
+
+			return await reader.ReadToEndAsync();
+		}
 	}
 }

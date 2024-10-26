@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -107,6 +108,36 @@ public sealed class DocumentClient : IDocumentClient
 		}
 
 		return await GetCore<Document<TFields>>(id, cancellationToken).ConfigureAwait(false);
+	}
+
+	/// <inheritdoc />
+	public async Task<DocumentContent> Download(int id, CancellationToken cancellationToken = default)
+	{
+		return await DownloadContentCore(Routes.Documents.DownloadUri(id), cancellationToken);
+	}
+
+	/// <inheritdoc />
+	public async Task<DocumentContent> DownloadOriginal(int id, CancellationToken cancellationToken = default)
+	{
+		return await DownloadContentCore(Routes.Documents.DownloadOriginalUri(id), cancellationToken);
+	}
+
+	/// <inheritdoc />
+	public async Task<DocumentContent> DownloadPreview(int id, CancellationToken cancellationToken = default)
+	{
+		return await DownloadContentCore(Routes.Documents.DownloadPreview(id), cancellationToken);
+	}
+
+	/// <inheritdoc />
+	public async Task<DocumentContent> DownloadOriginalPreview(int id, CancellationToken cancellationToken = default)
+	{
+		return await DownloadContentCore(Routes.Documents.DownloadOriginalPreview(id), cancellationToken);
+	}
+
+	/// <inheritdoc />
+	public async Task<DocumentContent> DownloadThumbnail(int id, CancellationToken cancellationToken = default)
+	{
+		return await DownloadContentCore(Routes.Documents.DownloadThumbnail(id), cancellationToken);
 	}
 
 	/// <inheritdoc />
@@ -266,6 +297,24 @@ public sealed class DocumentClient : IDocumentClient
 		await response.EnsureSuccessStatusCodeAsync().ConfigureAwait(false);
 
 		return (await response.Content.ReadFromJsonAsync(_options.GetTypeInfo<TDocument>()).ConfigureAwait(false))!;
+	}
+
+	private async Task<DocumentContent> DownloadContentCore(Uri requestUri, CancellationToken cancellationToken = default)
+	{
+		var response = await _httpClient.GetAsync(requestUri, cancellationToken).ConfigureAwait(false);
+
+		await response.EnsureSuccessStatusCodeAsync().ConfigureAwait(false);
+
+		var headers = response.Content.Headers;
+
+		return new(
+#if NET6_0_OR_GREATER
+			await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false),
+#else
+			await response.Content.ReadAsStreamAsync().ConfigureAwait(false),
+#endif
+			headers.ContentDisposition,
+			headers.ContentType!);
 	}
 
 	private async IAsyncEnumerable<CustomField> GetCustomFieldsCore(Uri requestUri, [EnumeratorCancellation] CancellationToken cancellationToken)

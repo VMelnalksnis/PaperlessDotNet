@@ -3,6 +3,7 @@
 // See LICENSE file in the project root for full license information.
 
 using System.Collections.Generic;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -47,6 +48,36 @@ public interface IDocumentClient
 	/// <typeparam name="TFields">The type containing the custom fields.</typeparam>
 	/// <returns>The document with the specified id if it exists; otherwise <see langword="null"/>.</returns>
 	Task<Document<TFields>?> Get<TFields>(int id, CancellationToken cancellationToken = default);
+
+	/// <summary>Downloads the archived file of the document.</summary>
+	/// <param name="id">The id of the document to download.</param>
+	/// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+	/// <returns>The content of the document.</returns>
+	Task<DocumentContent> Download(int id, CancellationToken cancellationToken = default);
+
+	/// <summary>Downloads the original file of the document.</summary>
+	/// <param name="id">The id of the document to download.</param>
+	/// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+	/// <returns>The content of the document.</returns>
+	Task<DocumentContent> DownloadOriginal(int id, CancellationToken cancellationToken = default);
+
+	/// <summary>Display the document inline, without downloading it.</summary>
+	/// <param name="id">The id of the document to download.</param>
+	/// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+	/// <returns>The content of the document.</returns>
+	Task<DocumentContent> DownloadPreview(int id, CancellationToken cancellationToken = default);
+
+	/// <summary>Display the original document inline, without downloading it.</summary>
+	/// <param name="id">The id of the document to download.</param>
+	/// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+	/// <returns>The content of the document.</returns>
+	Task<DocumentContent> DownloadOriginalPreview(int id, CancellationToken cancellationToken = default);
+
+	/// <summary>Download the PNG thumbnail of a document.</summary>
+	/// <param name="id">The id of the document to download.</param>
+	/// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+	/// <returns>The content of the document.</returns>
+	Task<DocumentContent> DownloadThumbnail(int id, CancellationToken cancellationToken = default);
 
 	/// <summary>Creates a new document.</summary>
 	/// <param name="document">The document to create.</param>
