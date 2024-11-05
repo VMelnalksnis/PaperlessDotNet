@@ -21,7 +21,7 @@
 		<PackageVersion Include="Newtonsoft.Json" Version="13.0.3"/>
 		<PackageVersion Include="NodaTime" Version="3.2.0"/>
 		<PackageVersion Include="NodaTime.Serialization.SystemTextJson" Version="1.2.0"/>
-		<PackageVersion Include="NodaTime.Testing" Version="3.1.12"/>
+		<PackageVersion Include="NodaTime.Testing" Version="3.2.0"/>
 		<PackageVersion Include="Nullable" Version="1.3.1"/>
 		<PackageVersion Include="NUnit" Version="3.14.0"/>
 		<PackageVersion Include="NUnit.Analyzers" Version="4.3.0"/>
