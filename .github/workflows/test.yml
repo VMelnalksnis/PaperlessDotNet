@@ -6,7 +6,7 @@ on:
     paths-ignore:
       - '**.md'
 
-  pull_request:
+  pull_request_target:
     branches: [ master ]
     paths-ignore:
       - '**.md'
@@ -20,9 +20,17 @@ jobs:
   run-tests:
     name: Run tests
     runs-on: ubuntu-22.04
+    environment: Testing
 
     steps:
       - uses: actions/checkout@v4.2.1
+        if: ${{ startsWith(github.repository, 'VMelnalksnis/') }}
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - uses: actions/checkout@v4.2.1
+        if: ${{ !startsWith(github.repository, 'VMelnalksnis/') }}
+
       - uses: actions/setup-dotnet@v4.0.1
         with:
           dotnet-version: |
