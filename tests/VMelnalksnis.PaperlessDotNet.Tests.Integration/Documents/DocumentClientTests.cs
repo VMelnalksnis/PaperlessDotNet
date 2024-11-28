@@ -10,6 +10,9 @@ using System.Net.Http;
 using System.Net.Mime;
 using System.Threading.Tasks;
 
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
+
 using NodaTime;
 
 using VMelnalksnis.PaperlessDotNet.Documents;
@@ -196,9 +199,10 @@ public sealed class DocumentClientTests(PaperlessFixture paperlessFixture) : Pap
 		await Client.Documents.CreateCustomField(new("field6", CustomFieldType.Float));
 		await Client.Documents.CreateCustomField(new("field7", CustomFieldType.Monetary));
 		await Client.Documents.CreateCustomField(new("field8", CustomFieldType.DocumentLink));
+		await Client.Documents.CreateCustomField(new("pfad", CustomFieldType.String));
 
 		var customFields = await Client.Documents.GetCustomFields().ToListAsync();
-		customFields.Should().HaveCount(8);
+		customFields.Should().HaveCount(9);
 
 		var paginatedCustomFields = await Client.Documents.GetCustomFields(1).ToListAsync();
 		paginatedCustomFields.Should().BeEquivalentTo(customFields);
@@ -212,6 +216,14 @@ public sealed class DocumentClientTests(PaperlessFixture paperlessFixture) : Pap
 
 		var id = result.Should().BeOfType<DocumentCreated>().Subject.Id;
 		var document = (await Client.Documents.Get<CustomFields>(id))!;
+
+		var options = Services.GetRequiredService<IOptions<PaperlessOptions>>().Value;
+		var client = new PaperlessNgxClient.PaperlessNgxClient(options.BaseAddress.AbsoluteUri, options.Token);
+		var documents2 = await client.GetDocuments();
+		foreach (var document2 in documents2 ?? [])
+		{
+			await client.UpdateCustomFieldPath(document2, Guid.NewGuid().ToString());
+		}
 
 		document.CustomFields.Should().BeNull("cannot create document with custom fields");
 
