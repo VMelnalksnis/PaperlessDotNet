@@ -66,6 +66,11 @@ public interface IDocumentClient
 	/// <returns>The updated document.</returns>
 	Task<Document<TFields>> Update<TFields>(int id, DocumentUpdate<TFields> document);
 
+	/// <summary>Deletes the document with the specified id.</summary>
+	/// <param name="id">The id of the document to delete.</param>
+	/// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+	Task Delete(int id);
+
 	/// <summary>Gets all custom fields.</summary>
 	/// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
 	/// <returns>A collection of all custom fields.</returns>

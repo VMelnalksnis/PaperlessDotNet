@@ -204,6 +204,13 @@ public sealed class DocumentClient : IDocumentClient
 	}
 
 	/// <inheritdoc />
+	public async Task Delete(int id)
+	{
+		using var response = await _httpClient.DeleteAsync(Routes.Documents.IdUri(id)).ConfigureAwait(false);
+		await response.EnsureSuccessStatusCodeAsync().ConfigureAwait(false);
+	}
+
+	/// <inheritdoc />
 	public IAsyncEnumerable<CustomField> GetCustomFields(CancellationToken cancellationToken = default)
 	{
 		return GetCustomFieldsCore(Routes.CustomFields.Uri, cancellationToken);

@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 using NodaTime;
@@ -99,6 +100,14 @@ public sealed class DocumentClientTests(PaperlessFixture paperlessFixture) : Pap
 		{
 			await Client.Tags.Delete(tag.Id);
 		}
+
+		await Client.Documents.Delete(id);
+
+		await FluentActions
+			.Awaiting(() => Client.Documents.Get(id))
+			.Should()
+			.ThrowExactlyAsync<HttpRequestException>()
+			.WithMessage("Response status code does not indicate success: 404 (Not Found).");
 	}
 
 	[Test]
