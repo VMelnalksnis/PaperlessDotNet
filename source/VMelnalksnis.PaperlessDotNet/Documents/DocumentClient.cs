@@ -4,7 +4,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -108,6 +107,16 @@ public sealed class DocumentClient : IDocumentClient
 		}
 
 		return await GetCore<Document<TFields>>(id, cancellationToken).ConfigureAwait(false);
+	}
+
+	/// <inheritdoc />
+	public async Task<DocumentMetadata> GetMetadata(int id, CancellationToken cancellationToken = default)
+	{
+		var metadata = await _httpClient
+			.GetFromJsonAsync(Routes.Documents.MetadataUri(id), _options.GetTypeInfo<DocumentMetadata>(), cancellationToken)
+			.ConfigureAwait(false);
+
+		return metadata!;
 	}
 
 	/// <inheritdoc />

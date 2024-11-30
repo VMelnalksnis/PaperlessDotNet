@@ -7,11 +7,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Mime;
 using System.Threading.Tasks;
 
 using NodaTime;
-
-using NUnit.Framework.Internal;
 
 using VMelnalksnis.PaperlessDotNet.Documents;
 using VMelnalksnis.PaperlessDotNet.Tags;
@@ -71,6 +70,7 @@ public sealed class DocumentClientTests(PaperlessFixture paperlessFixture) : Pap
 		var id = result.Should().BeOfType<DocumentCreated>().Subject.Id;
 		var document = (await Client.Documents.Get(id))!;
 		var documents = await Client.Documents.GetAll().ToListAsync();
+		var metadata = await Client.Documents.GetMetadata(id);
 
 		using var scope = new AssertionScope();
 
@@ -92,6 +92,15 @@ public sealed class DocumentClientTests(PaperlessFixture paperlessFixture) : Pap
 #else
 		document.Content.Replace("\n", Environment.NewLine).Replace("\r\n", Environment.NewLine).Should().Be(content);
 #endif
+		metadata.Should().BeEquivalentTo(new DocumentMetadata(
+			$"{id:0000000}.txt",
+			Environment.NewLine is "\r\n" ? "999853181bf31bb3f54be7c0bc20f6af" : "be37b4f97ce9f67970d878978e5db5eb",
+			Environment.NewLine is "\r\n" ? 2868 : 2859,
+			MediaTypeNames.Text.Plain,
+			documentName,
+			[],
+			"ca",
+			false));
 
 		var update = new DocumentUpdate { Title = $"{document.Title}1" };
 		var updatedDocument = await Client.Documents.Update(id, update);

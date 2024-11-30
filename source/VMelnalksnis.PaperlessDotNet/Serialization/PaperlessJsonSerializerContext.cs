@@ -29,4 +29,5 @@ namespace VMelnalksnis.PaperlessDotNet.Serialization;
 [JsonSerializable(typeof(PaginatedList<CustomField>))]
 [JsonSerializable(typeof(PaginatedList<Tag>))]
 [JsonSerializable(typeof(TagCreation))]
+[JsonSerializable(typeof(DocumentMetadata))]
 internal sealed partial class PaperlessJsonSerializerContext : JsonSerializerContext;

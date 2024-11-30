@@ -3,7 +3,6 @@
 // See LICENSE file in the project root for full license information.
 
 using System.Collections.Generic;
-using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -14,26 +13,26 @@ public interface IDocumentClient
 {
 	/// <summary>Gets all documents.</summary>
 	/// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-	/// <returns>A enumerable which will asynchronously iterate over all available pages of documents.</returns>
+	/// <returns>An enumerable which will asynchronously iterate over all available pages of documents.</returns>
 	IAsyncEnumerable<Document> GetAll(CancellationToken cancellationToken = default);
 
 	/// <summary>Gets all documents.</summary>
 	/// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
 	/// <typeparam name="TFields">The type containing the custom fields.</typeparam>
-	/// <returns>A enumerable which will asynchronously iterate over all available pages of documents.</returns>
+	/// <returns>An enumerable which will asynchronously iterate over all available pages of documents.</returns>
 	IAsyncEnumerable<Document<TFields>> GetAll<TFields>(CancellationToken cancellationToken = default);
 
 	/// <summary>Gets all documents.</summary>
 	/// <param name="pageSize">The number of documents to get in a single request.</param>
 	/// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-	/// <returns>A enumerable which will asynchronously iterate over all available pages of documents.</returns>
+	/// <returns>An enumerable which will asynchronously iterate over all available pages of documents.</returns>
 	IAsyncEnumerable<Document> GetAll(int pageSize, CancellationToken cancellationToken = default);
 
 	/// <summary>Gets all documents.</summary>
 	/// <param name="pageSize">The number of documents to get in a single request.</param>
 	/// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
 	/// <typeparam name="TFields">The type containing the custom fields.</typeparam>
-	/// <returns>A enumerable which will asynchronously iterate over all available pages of documents.</returns>
+	/// <returns>An enumerable which will asynchronously iterate over all available pages of documents.</returns>
 	IAsyncEnumerable<Document<TFields>> GetAll<TFields>(int pageSize, CancellationToken cancellationToken = default);
 
 	/// <summary>Gets the document with the specified id.</summary>
@@ -48,6 +47,12 @@ public interface IDocumentClient
 	/// <typeparam name="TFields">The type containing the custom fields.</typeparam>
 	/// <returns>The document with the specified id if it exists; otherwise <see langword="null"/>.</returns>
 	Task<Document<TFields>?> Get<TFields>(int id, CancellationToken cancellationToken = default);
+
+	/// <summary>Gets the metadata for the document with the specified id.</summary>
+	/// <param name="id">The id of the document for which to get the metadata.</param>
+	/// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+	/// <returns>The metadata of the specified document.</returns>
+	Task<DocumentMetadata> GetMetadata(int id, CancellationToken cancellationToken = default);
 
 	/// <summary>Downloads the archived file of the document.</summary>
 	/// <param name="id">The id of the document to download.</param>
@@ -110,7 +115,7 @@ public interface IDocumentClient
 	/// <summary>Gets all documents.</summary>
 	/// <param name="pageSize">The number of documents to get in a single request.</param>
 	/// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-	/// <returns>A enumerable which will asynchronously iterate over all available pages of documents.</returns>
+	/// <returns>An enumerable which will asynchronously iterate over all available pages of documents.</returns>
 	IAsyncEnumerable<CustomField> GetCustomFields(int pageSize, CancellationToken cancellationToken = default);
 
 	/// <summary>Creates a new custom field.</summary>
