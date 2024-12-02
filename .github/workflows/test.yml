@@ -6,7 +6,7 @@ on:
     paths-ignore:
       - '**.md'
 
-  pull_request_target:
+  pull_request:
     branches: [ master ]
     paths-ignore:
       - '**.md'
@@ -24,13 +24,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4.2.2
-        if: ${{ startsWith(github.repository, 'VMelnalksnis/') }}
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
-
-      - uses: actions/checkout@v4.2.2
-        if: ${{ !startsWith(github.repository, 'VMelnalksnis/') }}
-
       - uses: actions/setup-dotnet@v4.1.0
         with:
           dotnet-version: |
