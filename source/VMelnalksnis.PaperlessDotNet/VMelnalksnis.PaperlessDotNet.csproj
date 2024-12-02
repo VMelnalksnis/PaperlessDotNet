@@ -6,31 +6,31 @@
 		<Description>.NET Paperless API client</Description>
 		<PackageTags>paperless</PackageTags>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
-		
+
 		<IsPackable>true</IsPackable>
 		<IncludeSymbols>true</IncludeSymbols>
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 
 		<SignAssembly>true</SignAssembly>
 		<AssemblyOriginatorKeyFile>key.snk</AssemblyOriginatorKeyFile>
-		<NoWarn>CS8002</NoWarn>
+		<NoWarn>$(NoWarn); CS8002</NoWarn>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Ardalis.SmartEnum.SystemTextJson" />
-		<PackageReference Include="NodaTime" />
-		<PackageReference Include="NodaTime.Serialization.SystemTextJson" />
-		<PackageReference Include="System.Text.Json" />
+		<PackageReference Include="Ardalis.SmartEnum.SystemTextJson"/>
+		<PackageReference Include="NodaTime"/>
+		<PackageReference Include="NodaTime.Serialization.SystemTextJson"/>
+		<PackageReference Include="System.Text.Json"/>
 	</ItemGroup>
-	
+
 	<ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-		<PackageReference Include="Microsoft.Bcl.AsyncInterfaces" />
-		<PackageReference Include="System.Net.Http.Json" />
+		<PackageReference Include="Microsoft.Bcl.AsyncInterfaces"/>
+		<PackageReference Include="System.Net.Http.Json"/>
 		<PackageReference Include="System.ComponentModel.Annotations"/>
 	</ItemGroup>
 
 	<ItemGroup>
-		<None Include="..\..\README.md" Pack="true" PackagePath="\" />
+		<None Include="..\..\README.md" Pack="true" PackagePath="\"/>
 	</ItemGroup>
-	
+
 </Project>
