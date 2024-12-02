@@ -28,8 +28,9 @@ For use outside of ASP.NET Core, see the
 2. Register required services (see [tests](tests/VMelnalksnis.PaperlessDotNet.DependencyInjection.Tests/ServiceCollectionExtensionsTests.cs))
    ```csharp
    serviceCollection
+       .AddSingleton<IClock>(SystemClock.Instance)
        .AddSingleton(DateTimeZoneProviders.Tzdb)
-       .AddPaperlessDotNet(Configuration);
+       .AddPaperlessDotNet();
    ```
 
 3. Use `IPaperlessClient` to access all endpoints, or one of the specific clients defined in `IPaperlessClient`

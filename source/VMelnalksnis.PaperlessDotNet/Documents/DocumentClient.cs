@@ -122,31 +122,31 @@ public sealed class DocumentClient : IDocumentClient
 	/// <inheritdoc />
 	public async Task<DocumentContent> Download(int id, CancellationToken cancellationToken = default)
 	{
-		return await DownloadContentCore(Routes.Documents.DownloadUri(id), cancellationToken);
+		return await DownloadContentCore(Routes.Documents.DownloadUri(id), cancellationToken).ConfigureAwait(false);
 	}
 
 	/// <inheritdoc />
 	public async Task<DocumentContent> DownloadOriginal(int id, CancellationToken cancellationToken = default)
 	{
-		return await DownloadContentCore(Routes.Documents.DownloadOriginalUri(id), cancellationToken);
+		return await DownloadContentCore(Routes.Documents.DownloadOriginalUri(id), cancellationToken).ConfigureAwait(false);
 	}
 
 	/// <inheritdoc />
 	public async Task<DocumentContent> DownloadPreview(int id, CancellationToken cancellationToken = default)
 	{
-		return await DownloadContentCore(Routes.Documents.DownloadPreview(id), cancellationToken);
+		return await DownloadContentCore(Routes.Documents.DownloadPreview(id), cancellationToken).ConfigureAwait(false);
 	}
 
 	/// <inheritdoc />
 	public async Task<DocumentContent> DownloadOriginalPreview(int id, CancellationToken cancellationToken = default)
 	{
-		return await DownloadContentCore(Routes.Documents.DownloadOriginalPreview(id), cancellationToken);
+		return await DownloadContentCore(Routes.Documents.DownloadOriginalPreview(id), cancellationToken).ConfigureAwait(false);
 	}
 
 	/// <inheritdoc />
 	public async Task<DocumentContent> DownloadThumbnail(int id, CancellationToken cancellationToken = default)
 	{
-		return await DownloadContentCore(Routes.Documents.DownloadThumbnail(id), cancellationToken);
+		return await DownloadContentCore(Routes.Documents.DownloadThumbnail(id), cancellationToken).ConfigureAwait(false);
 	}
 
 	/// <inheritdoc />
@@ -180,7 +180,7 @@ public sealed class DocumentClient : IDocumentClient
 			content.Add(new StringContent(storagePath.ToString()), "storage_path");
 		}
 
-		foreach (var tag in document.TagIds ?? Array.Empty<int>())
+		foreach (var tag in document.TagIds ?? [])
 		{
 			content.Add(new StringContent(tag.ToString()), "tags");
 		}
@@ -317,10 +317,10 @@ public sealed class DocumentClient : IDocumentClient
 		var headers = response.Content.Headers;
 
 		return new(
-#if NET6_0_OR_GREATER
-			await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false),
-#else
+#if NETSTANDARD2_0
 			await response.Content.ReadAsStreamAsync().ConfigureAwait(false),
+#else
+			await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false),
 #endif
 			headers.ContentDisposition,
 			headers.ContentType!);

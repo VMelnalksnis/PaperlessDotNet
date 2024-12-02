@@ -2,8 +2,8 @@
 // Licensed under the Apache License 2.0.
 // See LICENSE file in the project root for full license information.
 
-// Fails due to float inaccuracy in .NET 3.1/5
-#if !(NETCOREAPP3_1 || NET5_0)
+// Fails due to float inaccuracy in all target frameworks that use the .NET Standard version
+#if NET8_0_OR_GREATER
 using System.Text.Json;
 using System.Text.Json.Serialization.Metadata;
 

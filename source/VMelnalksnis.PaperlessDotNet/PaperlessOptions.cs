@@ -13,15 +13,15 @@ public sealed class PaperlessOptions
 	/// <summary>The name of the configuration section.</summary>
 	public const string Name = "Paperless";
 
-	/// <summary>Gets the base address of the Paperless API.</summary>
+	/// <summary>Gets or sets the base address of the Paperless API.</summary>
 	[Required]
-	public Uri BaseAddress { get; init; } = null!;
+	public Uri BaseAddress { get; set; } = null!;
 
-	/// <summary>Gets the authentication token to use with all requests.</summary>
+	/// <summary>Gets or sets the authentication token to use with all requests.</summary>
 	[Required]
-	public string Token { get; init; } = null!;
+	public string Token { get; set; } = null!;
 
-	/// <summary> Gets the time delay between each polling of tasks in milliseconds.</summary>
+	/// <summary> Gets or sets the time delay between each polling of tasks in milliseconds.</summary>
 	[Required]
-	public TimeSpan TaskPollingDelay { get; init; } = TimeSpan.FromMilliseconds(100);
+	public TimeSpan TaskPollingDelay { get; set; } = TimeSpan.FromMilliseconds(100);
 }

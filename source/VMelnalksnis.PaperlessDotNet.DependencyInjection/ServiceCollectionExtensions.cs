@@ -20,10 +20,6 @@ using VMelnalksnis.PaperlessDotNet.Serialization;
 using VMelnalksnis.PaperlessDotNet.Tags;
 using VMelnalksnis.PaperlessDotNet.Tasks;
 
-#if NET6_0_OR_GREATER
-using System.Net.Mime;
-#endif
-
 namespace VMelnalksnis.PaperlessDotNet.DependencyInjection;
 
 /// <summary>Methods for configuring <see cref="IPaperlessClient"/> within <see cref="IServiceCollection"/>.</summary>
@@ -40,13 +36,34 @@ public static class ServiceCollectionExtensions
 
 	/// <summary>Adds all required services for <see cref="IPaperlessClient"/>, excluding external dependencies.</summary>
 	/// <param name="serviceCollection">The service collection in which to register the services.</param>
+	/// <param name="config">A delegate that is used to configure <see cref="PaperlessJsonSerializerOptions"/>.</param>
+	/// <returns>The <see cref="IHttpClientBuilder"/> for the <see cref="HttpClient"/> used by <see cref="IPaperlessClient"/>.</returns>
+#if NETSTANDARD2_0
+	[SuppressMessage("Trimming", "IL2026", Justification = $"{nameof(PaperlessOptions)} contains only system types.")]
+#else
+	[UnconditionalSuppressMessage("ReflectionAnalysis", "IL2026", Justification = $"{nameof(PaperlessOptions)} contains only system types.")]
+#endif
+	public static IHttpClientBuilder AddPaperlessDotNet(
+		this IServiceCollection serviceCollection,
+		Action<PaperlessJsonSerializerOptions>? config = null)
+	{
+		serviceCollection
+			.AddOptions<PaperlessOptions>()
+			.BindConfiguration(PaperlessOptions.Name)
+			.ValidateDataAnnotations();
+
+		return serviceCollection.AddClient(config);
+	}
+
+	/// <summary>Adds all required services for <see cref="IPaperlessClient"/>, excluding external dependencies.</summary>
+	/// <param name="serviceCollection">The service collection in which to register the services.</param>
 	/// <param name="configuration">The configuration to which to bind options models.</param>
 	/// <param name="config">A delegate that is used to configure <see cref="PaperlessJsonSerializerOptions"/>.</param>
 	/// <returns>The <see cref="IHttpClientBuilder"/> for the <see cref="HttpClient"/> used by <see cref="IPaperlessClient"/>.</returns>
-#if NET6_0_OR_GREATER
-	[UnconditionalSuppressMessage("ReflectionAnalysis", "IL2026", Justification = $"{nameof(PaperlessOptions)} contains only system types.")]
-#else
+#if NETSTANDARD2_0
 	[SuppressMessage("Trimming", "IL2026", Justification = $"{nameof(PaperlessOptions)} contains only system types.")]
+#else
+	[UnconditionalSuppressMessage("ReflectionAnalysis", "IL2026", Justification = $"{nameof(PaperlessOptions)} contains only system types.")]
 #endif
 	public static IHttpClientBuilder AddPaperlessDotNet(
 		this IServiceCollection serviceCollection,
@@ -58,6 +75,13 @@ public static class ServiceCollectionExtensions
 			.Bind(configuration.GetSection(PaperlessOptions.Name))
 			.ValidateDataAnnotations();
 
+		return serviceCollection.AddClient(config);
+	}
+
+	private static IHttpClientBuilder AddClient(
+		this IServiceCollection serviceCollection,
+		Action<PaperlessJsonSerializerOptions>? config)
+	{
 		return serviceCollection
 			.AddSingleton<PaperlessJsonSerializerOptions>(provider =>
 			{
@@ -98,11 +122,7 @@ public static class ServiceCollectionExtensions
 
 				client.BaseAddress = options.BaseAddress;
 				client.DefaultRequestHeaders.UserAgent.Add(_userAgent);
-#if NET6_0_OR_GREATER
-				client.DefaultRequestHeaders.Add("Accept", $"{MediaTypeNames.Application.Json}; version=2");
-#else
 				client.DefaultRequestHeaders.Add("Accept", "application/json; version=2");
-#endif
 				client.DefaultRequestHeaders.Authorization = new("Token", options.Token);
 			});
 	}

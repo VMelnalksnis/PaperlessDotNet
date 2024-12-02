@@ -14,25 +14,42 @@ namespace VMelnalksnis.PaperlessDotNet.DependencyInjection.Tests;
 
 public sealed class ServiceCollectionExtensionsTests
 {
-	[Fact]
-	public void AddPaperlessDotNet_ShouldRegisterRequiredServices()
-	{
-		var configuration = new ConfigurationBuilder()
-			.AddInMemoryCollection(new List<KeyValuePair<string, string?>>
-			{
-				new($"{PaperlessOptions.Name}:{nameof(PaperlessOptions.BaseAddress)}", "https://localhost:5002/"),
-				new($"{PaperlessOptions.Name}:{nameof(PaperlessOptions.Token)}", Guid.NewGuid().ToString("N")),
-			})
-			.Build();
+	private readonly IConfiguration _configuration = new ConfigurationBuilder()
+		.AddInMemoryCollection(new List<KeyValuePair<string, string?>>
+		{
+			new($"{PaperlessOptions.Name}:{nameof(PaperlessOptions.BaseAddress)}", "https://localhost:5002/"),
+			new($"{PaperlessOptions.Name}:{nameof(PaperlessOptions.Token)}", Guid.NewGuid().ToString("N")),
+		})
+		.Build();
 
+	[Fact]
+	public void AddPaperlessDotNet_ExplicitConfiguration_ShouldRegisterRequiredServices()
+	{
 		var serviceCollection = new ServiceCollection();
 
 		serviceCollection
 			.AddSingleton<IClock>(SystemClock.Instance)
 			.AddSingleton(DateTimeZoneProviders.Tzdb)
-			.AddPaperlessDotNet(configuration);
+			.AddPaperlessDotNet(_configuration);
 
-		var serviceProvider = serviceCollection.BuildServiceProvider();
+		using var serviceProvider = serviceCollection.BuildServiceProvider();
+		var paperlessClient = serviceProvider.GetRequiredService<IPaperlessClient>();
+
+		paperlessClient.Should().NotBeNull();
+	}
+
+	[Fact]
+	public void AddPaperlessDotNet_ShouldRegisterRequiredServices()
+	{
+		var serviceCollection = new ServiceCollection();
+
+		serviceCollection
+			.AddSingleton(_configuration)
+			.AddSingleton<IClock>(SystemClock.Instance)
+			.AddSingleton(DateTimeZoneProviders.Tzdb)
+			.AddPaperlessDotNet();
+
+		using var serviceProvider = serviceCollection.BuildServiceProvider();
 		var paperlessClient = serviceProvider.GetRequiredService<IPaperlessClient>();
 
 		paperlessClient.Should().NotBeNull();
