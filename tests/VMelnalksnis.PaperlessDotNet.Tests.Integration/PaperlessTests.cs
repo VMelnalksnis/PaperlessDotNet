@@ -36,6 +36,8 @@ public abstract class PaperlessTests
 
 	protected IPaperlessClient Client { get; private set; } = null!;
 
+	protected IServiceProvider Services => _serviceScope.ServiceProvider;
+
 	[SetUp]
 	public void SetUp()
 	{
