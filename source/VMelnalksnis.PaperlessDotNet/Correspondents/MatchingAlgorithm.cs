@@ -12,6 +12,9 @@ namespace VMelnalksnis.PaperlessDotNet.Correspondents;
 [UsedImplicitly(ImplicitUseKindFlags.Access, ImplicitUseTargetFlags.Members)]
 public sealed class MatchingAlgorithm : SmartEnum<MatchingAlgorithm>
 {
+	/// <summary>No matching will be performed.</summary>
+	public static readonly MatchingAlgorithm None = new("None", 0);
+
 	/// <summary>Document contains any of these words (space separated).</summary>
 	public static readonly MatchingAlgorithm AnyWord = new("Any word", 1);
 
