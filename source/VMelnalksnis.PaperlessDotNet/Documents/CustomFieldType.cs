@@ -49,6 +49,9 @@ public sealed class CustomFieldType : SmartEnum<CustomFieldType>
 	/// <seealso cref="int"/>
 	public static readonly CustomFieldType DocumentLink = new("documentlink", 8);
 
+	/// <summary>A pre-defined list of strings from which the user can choose.</summary>
+	public static readonly CustomFieldType Select = new("select", 9);
+
 	private CustomFieldType(string name, int value)
 		: base(name, value)
 	{

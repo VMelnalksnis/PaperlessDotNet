@@ -56,6 +56,10 @@ public sealed class CustomFieldConverterTests
 			      10
 			    ],
 			    "field": 8
+			  },
+			  {
+			    "value": 0,
+			    "field": 9
 			  }
 			]
 			""";
@@ -73,6 +77,7 @@ public sealed class CustomFieldConverterTests
 				[6] = new() { Id = 6, Name = "field6", DataType = CustomFieldType.Float },
 				[7] = new() { Id = 7, Name = "field7", DataType = CustomFieldType.Monetary },
 				[8] = new() { Id = 8, Name = "field8", DataType = CustomFieldType.DocumentLink },
+				[9] = new() { Id = 9, Name = "field9", DataType = CustomFieldType.Select },
 			},
 		};
 
@@ -92,6 +97,7 @@ public sealed class CustomFieldConverterTests
 			Field6 = 12.3456f,
 			Field7 = 12.34f,
 			Field8 = [10],
+			Field9 = SelectOptions.Option1,
 		});
 
 		JsonSerializer.Serialize(customFields, typeInfo).Should().Be(json);

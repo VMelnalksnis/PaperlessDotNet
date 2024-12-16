@@ -3,6 +3,9 @@
 // See LICENSE file in the project root for full license information.
 
 using System;
+using System.Text.Json.Serialization;
+
+using Ardalis.SmartEnum.SystemTextJson;
 
 using NodaTime;
 
@@ -25,4 +28,7 @@ internal sealed class CustomFields
 	public float? Field7 { get; set; }
 
 	public int[]? Field8 { get; set; }
+
+	[JsonConverter(typeof(SmartEnumValueConverter<SelectOptions, int>))]
+	public SelectOptions? Field9 { get; set; }
 }

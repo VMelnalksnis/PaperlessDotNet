@@ -18,4 +18,7 @@ public sealed class CustomField
 
 	/// <summary>Gets or sets the type of the custom field.</summary>
 	public CustomFieldType DataType { get; set; } = null!;
+
+	/// <summary>Gets or sets extra data about the custom field.</summary>
+	public CustomFieldExtraData? ExtraData { get; set; }
 }
