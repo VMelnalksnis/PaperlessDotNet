@@ -23,5 +23,5 @@ public sealed class PaperlessOptions
 
 	/// <summary> Gets or sets the time delay between each polling of tasks in milliseconds.</summary>
 	[Required]
-	public TimeSpan TaskPollingDelay { get; set; } = TimeSpan.FromMilliseconds(100);
+	public TimeSpan TaskPollingDelay { get; set; } = TimeSpan.FromMilliseconds(250);
 }

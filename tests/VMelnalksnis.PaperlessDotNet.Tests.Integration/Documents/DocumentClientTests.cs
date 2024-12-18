@@ -123,6 +123,44 @@ public sealed class DocumentClientTests(PaperlessFixture paperlessFixture) : Pap
 	}
 
 	[Test]
+	public async Task CreateDuplicate()
+	{
+		if (PaperlessVersion < new Version(2, 0))
+		{
+			Assert.Ignore($"Paperless v{PaperlessVersion} does not directly allow downloading documents.");
+		}
+
+		const string documentName = "Lorem Ipsum.txt";
+
+		var tasks = Enumerable
+			.Range(1, 5)
+			.Select(_ =>
+			{
+				var stream = typeof(DocumentClientTests).GetResource(documentName);
+				var creation = new DocumentCreation(stream, documentName)
+				{
+					Created = Clock.GetCurrentInstant(),
+					Title = "Lorem Ipsum",
+				};
+
+				return Client.Documents.Create(creation);
+			});
+
+		var results = await Task.WhenAll(tasks);
+		var created = results.OfType<DocumentCreated>().Should().ContainSingle().Subject;
+
+		results
+			.Except([created])
+			.Should()
+			.AllBeOfType<ImportFailed>()
+			.Which.Should()
+			.AllSatisfy(failed =>
+				failed.Result.Should().Be($"{documentName}: Not consuming {documentName}: It is a duplicate of Lorem Ipsum (#{created.Id})"));
+
+		await Client.Documents.Delete(created.Id);
+	}
+
+	[Test]
 	public async Task Download()
 	{
 		if (PaperlessVersion < new Version(2, 0))
