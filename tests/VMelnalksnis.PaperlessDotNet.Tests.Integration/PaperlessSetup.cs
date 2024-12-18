@@ -17,8 +17,8 @@ public static class PaperlessSetup
 	[
 		new("1.9.2"),
 		new("1.9.2", "1.9.2 with timezone", builder => builder.WithEnvironment("PAPERLESS_TIME_ZONE", "America/Chicago")),
-		new("2.3.3"),
-		new("2.3.3", "2.3.3 with timezone", builder => builder.WithEnvironment("PAPERLESS_TIME_ZONE", "America/Chicago")),
+		new("2.13.5"),
+		new("2.13.5", "2.13.5 with timezone", builder => builder.WithEnvironment("PAPERLESS_TIME_ZONE", "America/Chicago")),
 	];
 
 	[OneTimeSetUp]

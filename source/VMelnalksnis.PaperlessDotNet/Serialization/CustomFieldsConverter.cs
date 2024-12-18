@@ -78,7 +78,9 @@ public sealed class CustomFieldsConverter<TFields> : JsonConverter<TFields>
 			writer.WriteStartObject();
 			writer.WritePropertyName("value");
 
-			if (customField.DataType == CustomFieldType.String || customField.DataType == CustomFieldType.Url || customField.DataType == CustomFieldType.Date)
+			if (customField.DataType == CustomFieldType.String ||
+				customField.DataType == CustomFieldType.Url ||
+				customField.DataType == CustomFieldType.Date)
 			{
 				writer.WriteStringValue(property.Value.GetString());
 			}
@@ -86,7 +88,8 @@ public sealed class CustomFieldsConverter<TFields> : JsonConverter<TFields>
 			{
 				writer.WriteBooleanValue(property.Value.GetBoolean());
 			}
-			else if (customField.DataType == CustomFieldType.Integer)
+			else if (customField.DataType == CustomFieldType.Integer ||
+					 customField.DataType == CustomFieldType.Select)
 			{
 				writer.WriteNumberValue(property.Value.GetInt32());
 			}

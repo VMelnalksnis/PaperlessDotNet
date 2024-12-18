@@ -12,4 +12,5 @@ namespace VMelnalksnis.PaperlessDotNet.Tests.Integration.Documents;
 /// <inheritdoc cref="System.Text.Json.Serialization.JsonSerializerContext" />
 [JsonSerializable(typeof(PaginatedList<Document<CustomFields>>))]
 [JsonSerializable(typeof(DocumentUpdate<CustomFields>))]
+[JsonSerializable(typeof(SelectCustomFieldCreation<SelectOptions>))]
 internal sealed partial class SerializerContext : JsonSerializerContext;

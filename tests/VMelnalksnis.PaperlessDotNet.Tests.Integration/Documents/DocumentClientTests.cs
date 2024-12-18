@@ -130,7 +130,7 @@ public sealed class DocumentClientTests(PaperlessFixture paperlessFixture) : Pap
 			Assert.Ignore($"Paperless v{PaperlessVersion} does not directly allow downloading documents.");
 		}
 
-		const string documentName = "Lorem Ipsum.txt";
+		const string documentName = "Lorem Ipsum 4.txt";
 
 		var tasks = Enumerable
 			.Range(1, 5)
@@ -147,15 +147,15 @@ public sealed class DocumentClientTests(PaperlessFixture paperlessFixture) : Pap
 			});
 
 		var results = await Task.WhenAll(tasks);
-		var created = results.OfType<DocumentCreated>().Should().ContainSingle().Subject;
 
+		using var scope = new AssertionScope();
+		var created = results.OfType<DocumentCreated>().Should().ContainSingle().Subject;
 		results
-			.Except([created])
+			.OfType<ImportFailed>()
 			.Should()
-			.AllBeOfType<ImportFailed>()
-			.Which.Should()
-			.AllSatisfy(failed =>
-				failed.Result.Should().Be($"{documentName}: Not consuming {documentName}: It is a duplicate of Lorem Ipsum (#{created.Id})"));
+			.HaveCount(results.Length - 1)
+			.And.AllSatisfy(failed =>
+				failed.Result.Should().Be($"{documentName}: Not consuming {documentName}: It is a duplicate of Lorem Ipsum (#{created.Id})."));
 
 		await Client.Documents.Delete(created.Id);
 	}
@@ -226,17 +226,30 @@ public sealed class DocumentClientTests(PaperlessFixture paperlessFixture) : Pap
 
 		const string documentName = "Lorem Ipsum 2.txt";
 
-		await Client.Documents.CreateCustomField(new("field1", CustomFieldType.String));
-		await Client.Documents.CreateCustomField(new("field2", CustomFieldType.Url));
-		await Client.Documents.CreateCustomField(new("field3", CustomFieldType.Date));
-		await Client.Documents.CreateCustomField(new("field4", CustomFieldType.Boolean));
-		await Client.Documents.CreateCustomField(new("field5", CustomFieldType.Integer));
-		await Client.Documents.CreateCustomField(new("field6", CustomFieldType.Float));
-		await Client.Documents.CreateCustomField(new("field7", CustomFieldType.Monetary));
-		await Client.Documents.CreateCustomField(new("field8", CustomFieldType.DocumentLink));
+		var fieldCreations = new List<CustomFieldCreation>
+		{
+			new("field1", CustomFieldType.String),
+			new("field2", CustomFieldType.Url),
+			new("field3", CustomFieldType.Date),
+			new("field4", CustomFieldType.Boolean),
+			new("field5", CustomFieldType.Integer),
+			new("field6", CustomFieldType.Float),
+			new("field7", CustomFieldType.Monetary),
+			new("field8", CustomFieldType.DocumentLink),
+		};
+
+		if (PaperlessVersion >= new Version(2, 11, 0))
+		{
+			fieldCreations.Add(new SelectCustomFieldCreation<SelectOptions>("field9"));
+		}
+
+		foreach (var customFieldCreation in fieldCreations)
+		{
+			await Client.Documents.CreateCustomField(customFieldCreation);
+		}
 
 		var customFields = await Client.Documents.GetCustomFields().ToListAsync();
-		customFields.Should().HaveCount(8);
+		customFields.Should().HaveCount(fieldCreations.Count);
 
 		var paginatedCustomFields = await Client.Documents.GetCustomFields(1).ToListAsync();
 		paginatedCustomFields.Should().BeEquivalentTo(customFields);
@@ -267,6 +280,11 @@ public sealed class DocumentClientTests(PaperlessFixture paperlessFixture) : Pap
 				Field8 = [id],
 			},
 		};
+
+		if (PaperlessVersion >= new Version(2, 11, 0))
+		{
+			update.CustomFields.Field9 = SelectOptions.Option1;
+		}
 
 		SerializerOptions.CustomFields.Clear();
 		document = await Client.Documents.Update(id, update);

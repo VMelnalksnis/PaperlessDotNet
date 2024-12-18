@@ -84,3 +84,44 @@ serviceCollection.AddPaperlessDotNet(
 For a working example
 see [unit tests](tests/VMelnalksnis.PaperlessDotNet.Tests/Serialization/CustomFieldConverterTests.cs)
 and [integration tests](tests/VMelnalksnis.PaperlessDotNet.Tests.Integration/Documents/DocumentClientTests.cs).
+
+### Select custom fields
+Version `2.11.0` introduced `select` custom fields, which require additional setup in order to serialize/deserialize properly.
+First, you'll need to define `SmartEnum` class for each `select` custom field:
+```csharp
+public sealed class SelectOptions : SmartEnum<SelectOptions>
+{
+    public static readonly SelectOptions Option1 = new("First option", 0);
+    public static readonly SelectOptions Option2 = new("Second option", 1);
+
+    private SelectOptions(string name, int value)
+        : base(name, value)
+    {
+    }
+}
+```
+**NOTE:** the values **MUST** be sequential and start at 0 in order to match how they are stored in paperless.
+
+Then you can add the property to your `CustomFields` class
+```csharp
+    public SelectOptions? Field9 { get; set; }
+```
+and add the `SmartEnumValueConverter<TEnum, TValue>` in one of the possible ways:
+```csharp
+    [JsonConverter(typeof(SmartEnumValueConverter<SelectOptions, int>))]
+    public SelectOptions? Field9 { get; set; }
+```
+or
+```csharp
+serviceCollection.AddPaperlessDotNet(
+    configuration,
+    options =>
+    {
+        options.Options.Converters.Add(new SmartEnumValueConverter<SelectOptions, int>())
+        options.Options.Converters.Add(new CustomFieldsConverter<CustomFields>(options));
+        options.Options.TypeInfoResolverChain.Add(SerializerContext.Default);
+    });
+```
+
+In order to create a `select` custom field, you also need to use 
+either `SelectCustomFieldCreation<TEnum, TValue>` or `SelectCustomFieldCreation<TEnum>` and add it to the `JsonSerializerContext`. 
