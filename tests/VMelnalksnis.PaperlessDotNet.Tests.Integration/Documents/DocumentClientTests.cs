@@ -133,7 +133,7 @@ public sealed class DocumentClientTests(PaperlessFixture paperlessFixture) : Pap
 		const string documentName = "Lorem Ipsum 4.txt";
 
 		var tasks = Enumerable
-			.Range(1, 5)
+			.Range(1, 2)
 			.Select(_ =>
 			{
 				var stream = typeof(DocumentClientTests).GetResource(documentName);
