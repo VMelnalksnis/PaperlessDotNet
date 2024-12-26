@@ -49,6 +49,12 @@ public sealed class DocumentClient : IDocumentClient
 	{
 		return GetAllCore<Document>(Routes.Documents.Uri, cancellationToken);
 	}
+	
+	/// <inheritdoc />
+	public IAsyncEnumerable<Document> GetAllByTagId(int a_TagId,CancellationToken cancellationToken = default)
+	{
+		return GetAllCore<Document>(Routes.Documents.ByTagIdUri(a_TagId), cancellationToken);
+	}
 
 	/// <inheritdoc />
 	public async IAsyncEnumerable<Document<TFields>> GetAll<TFields>([EnumeratorCancellation] CancellationToken cancellationToken = default)
