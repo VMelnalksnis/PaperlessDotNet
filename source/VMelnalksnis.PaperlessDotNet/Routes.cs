@@ -39,6 +39,8 @@ internal static class Routes
 		internal static readonly Uri Uri = new(_documents, Relative);
 		internal static readonly Uri CreateUri = new($"{_documents}post_document/", Relative);
 
+		internal static Uri ByTagIdUri(int id) => new($"{_documents}?tags__id__all={id}", Relative);
+
 		internal static Uri IdUri(int id) => new($"{_documents}{id}/", Relative);
 
 		internal static Uri MetadataUri(int id) => new($"{_documents}{id}/metadata/", Relative);
