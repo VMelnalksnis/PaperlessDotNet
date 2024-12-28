@@ -35,7 +35,11 @@ public sealed class DocumentClient : IDocumentClient
 	/// <param name="serializerOptions">Paperless specific instance of <see cref="JsonSerializerOptions"/>.</param>
 	/// <param name="taskClient">Paperless task API client.</param>
 	/// <param name="taskPollingDelay">The delay in ms between polling for import task completion.</param>
-	public DocumentClient(HttpClient httpClient, PaperlessJsonSerializerOptions serializerOptions, ITaskClient taskClient, TimeSpan taskPollingDelay)
+	public DocumentClient(
+		HttpClient httpClient,
+		PaperlessJsonSerializerOptions serializerOptions,
+		ITaskClient taskClient,
+		TimeSpan taskPollingDelay)
 	{
 		_httpClient = httpClient;
 		_taskClient = taskClient;
@@ -51,7 +55,8 @@ public sealed class DocumentClient : IDocumentClient
 	}
 
 	/// <inheritdoc />
-	public async IAsyncEnumerable<Document<TFields>> GetAll<TFields>([EnumeratorCancellation] CancellationToken cancellationToken = default)
+	public async IAsyncEnumerable<Document<TFields>> GetAll<TFields>(
+		[EnumeratorCancellation] CancellationToken cancellationToken = default)
 	{
 		if (_paperlessOptions.CustomFields.Count is 0)
 		{
@@ -74,7 +79,9 @@ public sealed class DocumentClient : IDocumentClient
 	}
 
 	/// <inheritdoc />
-	public async IAsyncEnumerable<Document<TFields>> GetAll<TFields>(int pageSize, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+	public async IAsyncEnumerable<Document<TFields>> GetAll<TFields>(
+		int pageSize,
+		[EnumeratorCancellation] CancellationToken cancellationToken = default)
 	{
 		if (_paperlessOptions.CustomFields.Count is 0)
 		{
@@ -88,6 +95,17 @@ public sealed class DocumentClient : IDocumentClient
 		{
 			yield return document;
 		}
+	}
+
+	/// <summary>
+	/// Gets all documents tagged with a certain tag Id.
+	/// </summary>
+	/// <param name="tagId">Id of the tag for which to retrieve all documents.</param>
+	/// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+	/// <returns>An enumerable which will asynchronously iterate over all retrieved documents.</returns>
+	public IAsyncEnumerable<Document> GetAllByTagId(int tagId, CancellationToken cancellationToken = default)
+	{
+		return GetAllCore<Document>(Routes.Documents.ByTagIdUri(tagId), cancellationToken);
 	}
 
 	/// <inheritdoc />
@@ -113,7 +131,8 @@ public sealed class DocumentClient : IDocumentClient
 	public async Task<DocumentMetadata> GetMetadata(int id, CancellationToken cancellationToken = default)
 	{
 		var metadata = await _httpClient
-			.GetFromJsonAsync(Routes.Documents.MetadataUri(id), _options.GetTypeInfo<DocumentMetadata>(), cancellationToken)
+			.GetFromJsonAsync(Routes.Documents.MetadataUri(id), _options.GetTypeInfo<DocumentMetadata>(),
+				cancellationToken)
 			.ConfigureAwait(false);
 
 		return metadata!;
@@ -128,7 +147,8 @@ public sealed class DocumentClient : IDocumentClient
 	/// <inheritdoc />
 	public async Task<DocumentContent> DownloadOriginal(int id, CancellationToken cancellationToken = default)
 	{
-		return await DownloadContentCore(Routes.Documents.DownloadOriginalUri(id), cancellationToken).ConfigureAwait(false);
+		return await DownloadContentCore(Routes.Documents.DownloadOriginalUri(id), cancellationToken)
+			.ConfigureAwait(false);
 	}
 
 	/// <inheritdoc />
@@ -140,13 +160,15 @@ public sealed class DocumentClient : IDocumentClient
 	/// <inheritdoc />
 	public async Task<DocumentContent> DownloadOriginalPreview(int id, CancellationToken cancellationToken = default)
 	{
-		return await DownloadContentCore(Routes.Documents.DownloadOriginalPreview(id), cancellationToken).ConfigureAwait(false);
+		return await DownloadContentCore(Routes.Documents.DownloadOriginalPreview(id), cancellationToken)
+			.ConfigureAwait(false);
 	}
 
 	/// <inheritdoc />
 	public async Task<DocumentContent> DownloadThumbnail(int id, CancellationToken cancellationToken = default)
 	{
-		return await DownloadContentCore(Routes.Documents.DownloadThumbnail(id), cancellationToken).ConfigureAwait(false);
+		return await DownloadContentCore(Routes.Documents.DownloadThumbnail(id), cancellationToken)
+			.ConfigureAwait(false);
 	}
 
 	/// <inheritdoc />
@@ -271,7 +293,8 @@ public sealed class DocumentClient : IDocumentClient
 
 		await response.EnsureSuccessStatusCodeAsync().ConfigureAwait(false);
 
-		var createdField = (await response.Content.ReadFromJsonAsync(_options.GetTypeInfo<CustomField>()).ConfigureAwait(false))!;
+		var createdField = (await response.Content.ReadFromJsonAsync(_options.GetTypeInfo<CustomField>())
+			.ConfigureAwait(false))!;
 		_paperlessOptions.CustomFields.AddOrUpdate(createdField.Id, createdField, (_, _) => createdField);
 
 		return createdField;
@@ -308,7 +331,9 @@ public sealed class DocumentClient : IDocumentClient
 		return (await response.Content.ReadFromJsonAsync(_options.GetTypeInfo<TDocument>()).ConfigureAwait(false))!;
 	}
 
-	private async Task<DocumentContent> DownloadContentCore(Uri requestUri, CancellationToken cancellationToken = default)
+	private async Task<DocumentContent> DownloadContentCore(
+		Uri requestUri,
+		CancellationToken cancellationToken = default)
 	{
 		var response = await _httpClient.GetAsync(requestUri, cancellationToken).ConfigureAwait(false);
 
@@ -326,9 +351,12 @@ public sealed class DocumentClient : IDocumentClient
 			headers.ContentType!);
 	}
 
-	private async IAsyncEnumerable<CustomField> GetCustomFieldsCore(Uri requestUri, [EnumeratorCancellation] CancellationToken cancellationToken)
+	private async IAsyncEnumerable<CustomField> GetCustomFieldsCore(
+		Uri requestUri,
+		[EnumeratorCancellation] CancellationToken cancellationToken)
 	{
-		var fields = _httpClient.GetPaginated(requestUri, _options.GetTypeInfo<PaginatedList<CustomField>>(), cancellationToken);
+		var fields = _httpClient.GetPaginated(requestUri, _options.GetTypeInfo<PaginatedList<CustomField>>(),
+			cancellationToken);
 
 		await foreach (var field in fields.ConfigureAwait(false))
 		{
