@@ -41,6 +41,8 @@ internal static class Routes
 
 		internal static Uri IdUri(int id) => new($"{_documents}{id}/", Relative);
 
+		internal static Uri ByTagIdUri(int id) => new($"{_documents}?tags__id__all={id}", Relative);
+
 		internal static Uri MetadataUri(int id) => new($"{_documents}{id}/metadata/", Relative);
 
 		internal static Uri DownloadUri(int id) => new($"{_documents}{id}/download/", Relative);
