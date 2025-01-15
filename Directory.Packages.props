@@ -9,7 +9,7 @@
 		<PackageVersion Include="IsExternalInit" Version="1.0.3"/>
 		<PackageVersion Include="Jetbrains.Annotations" Version="2024.3.0"/>
 		<PackageVersion Include="JunitXml.TestLogger" Version="5.0.0"/>
-		<PackageVersion Include="Microsoft.Bcl.AsyncInterfaces" Version="9.0.0"/>
+		<PackageVersion Include="Microsoft.Bcl.AsyncInterfaces" Version="9.0.1"/>
 		<PackageVersion Include="Microsoft.Extensions.Configuration" Version="9.0.0"/>
 		<PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.0"/>
 		<PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.0"/>
