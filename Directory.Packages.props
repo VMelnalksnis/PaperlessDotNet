@@ -5,7 +5,7 @@
 		<PackageVersion Include="coverlet.msbuild" Version="6.0.2"/>
 		<PackageVersion Include="DotNet.ReproducibleBuilds" Version="1.2.25"/>
 		<PackageVersion Include="DotNet.ReproducibleBuilds.Isolated" Version="1.2.25"/>
-		<PackageVersion Include="FluentAssertions" Version="7.0.0"/>
+		<PackageVersion Include="FluentAssertions" Version="7.1.0"/>
 		<PackageVersion Include="IsExternalInit" Version="1.0.3"/>
 		<PackageVersion Include="Jetbrains.Annotations" Version="2024.3.0"/>
 		<PackageVersion Include="JunitXml.TestLogger" Version="5.0.0"/>
