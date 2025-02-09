@@ -101,6 +101,28 @@ public sealed class DocumentClient : IDocumentClient
 		return GetAllCore<Document>(Routes.Documents.ByTagIdUri(tagId), cancellationToken);
 	}
 
+	/// <summary>
+	/// Gets all documents including custom fields tagged with a certain tag Id.
+	/// </summary>
+	/// <param name="tagId">Id of the tag for which to retrieve all documents.</param>
+	/// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+	/// <returns>An enumerable which will asynchronously iterate over all retrieved documents.</returns>
+	public async IAsyncEnumerable<Document<TFields>> GetAllByTagId<TFields>(int tagId, CancellationToken cancellationToken = default)
+	{
+		if (_paperlessOptions.CustomFields.Count is 0)
+		{
+			await foreach (var unused in GetCustomFields(cancellationToken).ConfigureAwait(false))
+			{
+			}
+		}
+
+		var documents = GetAllCore<Document<TFields>>(Routes.Documents.ByTagIdUri(tagId), cancellationToken);
+		await foreach (var document in documents.ConfigureAwait(false))
+		{
+			yield return document;
+		}
+	}
+	
 	/// <inheritdoc />
 	public Task<Document?> Get(int id, CancellationToken cancellationToken = default)
 	{
