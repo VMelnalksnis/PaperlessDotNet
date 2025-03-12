@@ -57,7 +57,7 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
 
       - name: Gather Test Results
-        uses: codecov/test-results-action@v1.0.1
+        uses: codecov/test-results-action@v1.1.0
         if: always()
         with:
             token: ${{ secrets.CODECOV_TOKEN }}
