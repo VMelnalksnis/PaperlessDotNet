@@ -51,6 +51,13 @@ public sealed class DocumentClient : IDocumentClient
 	}
 
 	/// <inheritdoc />
+	public IAsyncEnumerable<Document> GetAll(DocumentFilter filter, CancellationToken cancellationToken = default)
+	{
+		var uri = new Uri(Routes.Documents.Uri.ToString() + filter.ToQueryString());
+		return GetAllCore<Document>(uri, cancellationToken);
+	}
+
+	/// <inheritdoc />
 	public async IAsyncEnumerable<Document<TFields>> GetAll<TFields>([EnumeratorCancellation] CancellationToken cancellationToken = default)
 	{
 		if (_paperlessOptions.CustomFields.Count is 0)
@@ -68,9 +75,34 @@ public sealed class DocumentClient : IDocumentClient
 	}
 
 	/// <inheritdoc />
+	public async IAsyncEnumerable<Document<TFields>> GetAll<TFields>(DocumentFilter filter, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+	{
+		if (_paperlessOptions.CustomFields.Count is 0)
+		{
+			await foreach (var unused in GetCustomFields(cancellationToken).ConfigureAwait(false))
+			{
+			}
+		}
+
+		var uri = new Uri(Routes.Documents.Uri.ToString() + filter.ToQueryString());
+		var documents = GetAllCore<Document<TFields>>(uri, cancellationToken);
+		await foreach (var document in documents.ConfigureAwait(false))
+		{
+			yield return document;
+		}
+	}
+
+	/// <inheritdoc />
 	public IAsyncEnumerable<Document> GetAll(int pageSize, CancellationToken cancellationToken = default)
 	{
 		return GetAllCore<Document>(Routes.Documents.PagedUri(pageSize), cancellationToken);
+	}
+
+	/// <inheritdoc />
+	public IAsyncEnumerable<Document> GetAll(DocumentFilter filter, int pageSize, CancellationToken cancellationToken = default)
+	{
+		var uri = new Uri(Routes.Documents.PagedUri(pageSize).ToString() + filter.ToQueryString());
+		return GetAllCore<Document>(uri, cancellationToken);
 	}
 
 	/// <inheritdoc />
@@ -84,6 +116,24 @@ public sealed class DocumentClient : IDocumentClient
 		}
 
 		var documents = GetAllCore<Document<TFields>>(Routes.Documents.PagedUri(pageSize), cancellationToken);
+		await foreach (var document in documents.ConfigureAwait(false))
+		{
+			yield return document;
+		}
+	}
+
+	/// <inheritdoc />
+	public async IAsyncEnumerable<Document<TFields>> GetAll<TFields>(DocumentFilter filter, int pageSize, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+	{
+		if (_paperlessOptions.CustomFields.Count is 0)
+		{
+			await foreach (var unused in GetCustomFields(cancellationToken).ConfigureAwait(false))
+			{
+			}
+		}
+
+		var uri = new Uri(Routes.Documents.PagedUri(pageSize).ToString() + filter.ToQueryString());
+		var documents = GetAllCore<Document<TFields>>(uri, cancellationToken);
 		await foreach (var document in documents.ConfigureAwait(false))
 		{
 			yield return document;
