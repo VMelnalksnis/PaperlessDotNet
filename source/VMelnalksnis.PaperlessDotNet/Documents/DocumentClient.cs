@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Runtime.CompilerServices;
@@ -14,6 +15,7 @@ using System.Threading.Tasks;
 
 using NodaTime.Text;
 
+using VMelnalksnis.PaperlessDotNet.Filters;
 using VMelnalksnis.PaperlessDotNet.Serialization;
 using VMelnalksnis.PaperlessDotNet.Tasks;
 
@@ -47,7 +49,7 @@ public sealed class DocumentClient : IDocumentClient
 	/// <inheritdoc />
 	public IAsyncEnumerable<Document> GetAll(CancellationToken cancellationToken = default)
 	{
-		return GetAllCore<Document>(Routes.Documents.Uri, cancellationToken);
+		return GetAllCore<Document>(Routes.Documents.Uri(), cancellationToken);
 	}
 
 	/// <inheritdoc />
@@ -60,7 +62,7 @@ public sealed class DocumentClient : IDocumentClient
 			}
 		}
 
-		var documents = GetAllCore<Document<TFields>>(Routes.Documents.Uri, cancellationToken);
+		var documents = GetAllCore<Document<TFields>>(Routes.Documents.Uri(), cancellationToken);
 		await foreach (var document in documents.ConfigureAwait(false))
 		{
 			yield return document;
@@ -70,11 +72,29 @@ public sealed class DocumentClient : IDocumentClient
 	/// <inheritdoc />
 	public IAsyncEnumerable<Document> GetAll(int pageSize, CancellationToken cancellationToken = default)
 	{
-		return GetAllCore<Document>(Routes.Documents.PagedUri(pageSize), cancellationToken);
+		return Get(filter => filter.PageSize == pageSize, null, cancellationToken);
 	}
 
 	/// <inheritdoc />
-	public async IAsyncEnumerable<Document<TFields>> GetAll<TFields>(int pageSize, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+	public IAsyncEnumerable<Document<TFields>> GetAll<TFields>(int pageSize, CancellationToken cancellationToken = default)
+	{
+		return Get<TFields>(filter => filter.PageSize == pageSize, null, cancellationToken);
+	}
+
+	/// <inheritdoc />
+	public IAsyncEnumerable<Document> Get(
+		Expression<Func<DocumentFilter, bool>> filter,
+		Expression<Func<Document, object>>? orderBy = null,
+		CancellationToken cancellationToken = default)
+	{
+		return GetAllCore<Document>(Routes.Documents.Uri(filter.GetQueryString(orderBy)), cancellationToken);
+	}
+
+	/// <inheritdoc />
+	public async IAsyncEnumerable<Document<TFields>> Get<TFields>(
+		Expression<Func<DocumentFilter, bool>> filter,
+		Expression<Func<Document, object>>? orderBy = null,
+		[EnumeratorCancellation] CancellationToken cancellationToken = default)
 	{
 		if (_paperlessOptions.CustomFields.Count is 0)
 		{
@@ -83,7 +103,8 @@ public sealed class DocumentClient : IDocumentClient
 			}
 		}
 
-		var documents = GetAllCore<Document<TFields>>(Routes.Documents.PagedUri(pageSize), cancellationToken);
+		var uri = Routes.Documents.Uri(filter.GetQueryString(orderBy));
+		var documents = GetAllCore<Document<TFields>>(uri, cancellationToken);
 		await foreach (var document in documents.ConfigureAwait(false))
 		{
 			yield return document;
