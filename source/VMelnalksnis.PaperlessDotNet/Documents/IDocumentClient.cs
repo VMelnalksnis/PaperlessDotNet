@@ -35,6 +35,34 @@ public interface IDocumentClient
 	/// <returns>An enumerable which will asynchronously iterate over all available pages of documents.</returns>
 	IAsyncEnumerable<Document<TFields>> GetAll<TFields>(int pageSize, CancellationToken cancellationToken = default);
 
+	/// <summary>Gets all documents with the specified filter.</summary>
+	/// <param name="filter">The filter to apply to the documents.</param>
+	/// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+	/// <returns>All documents matching the filter.</returns>
+	IAsyncEnumerable<Document> GetAll(DocumentFilter filter, CancellationToken cancellationToken = default);
+
+	/// <summary>Gets all documents with custom fields with the specified filter.</summary>
+	/// <param name="filter">The filter to apply to the documents.</param>
+	/// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+	/// <typeparam name="TFields">The type of custom fields.</typeparam>
+	/// <returns>All documents with custom fields matching the filter.</returns>
+	IAsyncEnumerable<Document<TFields>> GetAll<TFields>(DocumentFilter filter, CancellationToken cancellationToken = default);
+
+	/// <summary>Gets all documents with the specified filter and page size.</summary>
+	/// <param name="filter">The filter to apply to the documents.</param>
+	/// <param name="pageSize">The number of documents to get in a single request.</param>
+	/// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+	/// <returns>All documents matching the filter.</returns>
+	IAsyncEnumerable<Document> GetAll(DocumentFilter filter, int pageSize, CancellationToken cancellationToken = default);
+
+	/// <summary>Gets all documents with custom fields with the specified filter and page size.</summary>
+	/// <param name="filter">The filter to apply to the documents.</param>
+	/// <param name="pageSize">The number of documents to get in a single request.</param>
+	/// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+	/// <typeparam name="TFields">The type of custom fields.</typeparam>
+	/// <returns>All documents with custom fields matching the filter.</returns>
+	IAsyncEnumerable<Document<TFields>> GetAll<TFields>(DocumentFilter filter, int pageSize, CancellationToken cancellationToken = default);
+
 	/// <summary>Gets the document with the specified id.</summary>
 	/// <param name="id">The id of the document to get.</param>
 	/// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>

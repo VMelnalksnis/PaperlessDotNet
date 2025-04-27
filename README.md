@@ -125,3 +125,4 @@ serviceCollection.AddPaperlessDotNet(
 
 In order to create a `select` custom field, you also need to use 
 either `SelectCustomFieldCreation<TEnum, TValue>` or `SelectCustomFieldCreation<TEnum>` and add it to the `JsonSerializerContext`. 
+
