@@ -35,6 +35,19 @@ For use outside of ASP.NET Core, see the
 
 3. Use `IPaperlessClient` to access all endpoints, or one of the specific clients defined in `IPaperlessClient`
 
+## Filtering
+Some objects, such as documents, support filtering on various fields.
+The filter format slightly differs from the object itself, and can be seen in a respective `Filter` object;
+for  example [DocumentFilter](source/VMelnalksnis.PaperlessDotNet/Filters/DocumentFilter.cs) for documents.
+Filters can be written inline as expressions:
+```csharp
+var filteredDocuments = await Client.Documents.Get(
+        filter => filter.Title.EndsWith("Ipsum1") && filter.ArchiveSerialNumber <= 1,
+        orderBy => orderBy.Added)
+    .ToListAsync();
+```
+For all supported filtering methods see [test cases](tests/VMelnalksnis.PaperlessDotNet.Tests/Filters/FilterExpressionTestCases.cs).
+
 ## Custom fields
 
 Paperless supports adding [custom fields](https://docs.paperless-ngx.com/usage/#custom-fields) to documents.

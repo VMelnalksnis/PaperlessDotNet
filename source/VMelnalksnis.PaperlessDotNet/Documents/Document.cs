@@ -54,6 +54,10 @@ public class Document
 
 	/// <summary>Gets or sets the id of the document.</summary>
 	public int Id { get; set; }
+
+	/// <summary>Gets or sets the owner id.</summary>
+	[JsonPropertyName("owner")]
+	public int? OwnerId { get; set; }
 }
 
 /// <summary>An archived document with custom fields.</summary>
