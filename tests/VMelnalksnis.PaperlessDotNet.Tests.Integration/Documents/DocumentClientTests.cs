@@ -107,6 +107,14 @@ public sealed class DocumentClientTests(PaperlessFixture paperlessFixture) : Pap
 
 		updatedDocument.Title.Should().Be(update.Title);
 
+		var filteredDocuments = await Client.Documents
+			.Get(
+				filter => filter.Title.EndsWith("Ipsum1") && filter.ArchiveSerialNumber <= 1,
+				orderBy => orderBy.Added)
+			.ToListAsync();
+
+		filteredDocuments.Should().ContainSingle().Which.Should().BeEquivalentTo(updatedDocument);
+
 		await Client.Correspondents.Delete(correspondent.Id);
 		foreach (var tag in tags)
 		{

@@ -36,8 +36,11 @@ internal static class Routes
 
 	internal static class Documents
 	{
-		internal static readonly Uri Uri = new(_documents, Relative);
 		internal static readonly Uri CreateUri = new($"{_documents}post_document/", Relative);
+
+		internal static Uri Uri() => new($"{_documents}", Relative);
+
+		internal static Uri Uri(string query) => new($"{_documents}?{query}", Relative);
 
 		internal static Uri IdUri(int id) => new($"{_documents}{id}/", Relative);
 
@@ -52,8 +55,6 @@ internal static class Routes
 		internal static Uri DownloadOriginalPreview(int id) => new($"{_documents}{id}/preview/?original=true", Relative);
 
 		internal static Uri DownloadThumbnail(int id) => new($"{_documents}{id}/thumb/", Relative);
-
-		internal static Uri PagedUri(int pageSize) => new($"{_documents}?{_pageSize}={pageSize}", Relative);
 	}
 
 	internal static class Tags

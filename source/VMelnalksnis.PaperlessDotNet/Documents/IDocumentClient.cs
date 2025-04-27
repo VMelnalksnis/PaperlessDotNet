@@ -2,9 +2,13 @@
 // Licensed under the Apache License 2.0.
 // See LICENSE file in the project root for full license information.
 
+using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
+
+using VMelnalksnis.PaperlessDotNet.Filters;
 
 namespace VMelnalksnis.PaperlessDotNet.Documents;
 
@@ -34,6 +38,27 @@ public interface IDocumentClient
 	/// <typeparam name="TFields">The type containing the custom fields.</typeparam>
 	/// <returns>An enumerable which will asynchronously iterate over all available pages of documents.</returns>
 	IAsyncEnumerable<Document<TFields>> GetAll<TFields>(int pageSize, CancellationToken cancellationToken = default);
+
+	/// <summary>Gets filtered documents.</summary>
+	/// <param name="filter">Expression for filtering the results.</param>
+	/// <param name="orderBy">Expression for selecting the field by which to order the results.</param>
+	/// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+	/// <returns>An enumerable which will asynchronously iterate over all available pages of documents.</returns>
+	IAsyncEnumerable<Document> Get(
+		Expression<Func<DocumentFilter, bool>> filter,
+		Expression<Func<Document, object>>? orderBy = null,
+		CancellationToken cancellationToken = default);
+
+	/// <summary>Gets filtered documents.</summary>
+	/// <param name="filter">Expression for filtering the results.</param>
+	/// <param name="orderBy">Expression for selecting the field by which to order the results.</param>
+	/// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+	/// <typeparam name="TFields">The type containing the custom fields.</typeparam>
+	/// <returns>An enumerable which will asynchronously iterate over all available pages of documents.</returns>
+	IAsyncEnumerable<Document<TFields>> Get<TFields>(
+		Expression<Func<DocumentFilter, bool>> filter,
+		Expression<Func<Document, object>>? orderBy = null,
+		CancellationToken cancellationToken = default);
 
 	/// <summary>Gets the document with the specified id.</summary>
 	/// <param name="id">The id of the document to get.</param>
