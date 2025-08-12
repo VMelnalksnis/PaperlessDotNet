@@ -23,7 +23,7 @@ jobs:
     environment: Testing
 
     steps:
-      - uses: actions/checkout@v4.2.2
+      - uses: actions/checkout@v5.0.0
       - uses: actions/setup-dotnet@v4.3.1
         with:
           dotnet-version: |
@@ -67,7 +67,7 @@ jobs:
     name: Resharper
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4.2.2
+      - uses: actions/checkout@v5.0.0
       - uses: actions/setup-dotnet@v4.3.1
       - run: dotnet restore
       - run: dotnet build --configuration Release --no-restore /warnAsError /nologo /clp:NoSummary
