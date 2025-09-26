@@ -13,6 +13,8 @@ internal static class Routes
 	private const string _correspondents = "/api/correspondents/";
 	private const string _customFields = "/api/custom_fields/";
 	private const string _documents = "/api/documents/";
+	private const string _documenttypes = "/api/document_types/";
+	private const string _storagepaths = "/api/storage_paths/";
 	private const string _tags = "/api/tags/";
 	private const string _tasks = "/api/tasks/";
 
@@ -27,6 +29,15 @@ internal static class Routes
 		internal static Uri PagedUri(int pageSize) => new($"{_correspondents}?{_pageSize}={pageSize}", Relative);
 	}
 
+	internal static class DocumentTypes
+	{
+		internal static readonly Uri Uri = new(_documenttypes, Relative);
+
+		internal static Uri IdUri(int id) => new($"{_documenttypes}{id}/", Relative);
+
+		internal static Uri PagedUri(int pageSize) => new($"{_documenttypes}?{_pageSize}={pageSize}", Relative);
+	}
+	
 	internal static class CustomFields
 	{
 		internal static readonly Uri Uri = new(_customFields, Relative);
@@ -38,6 +49,8 @@ internal static class Routes
 	{
 		internal static readonly Uri Uri = new(_documents, Relative);
 		internal static readonly Uri CreateUri = new($"{_documents}post_document/", Relative);
+
+		internal static Uri ByTagIdUri(int id) => new($"{_documents}?tags__id__all={id}", Relative);
 
 		internal static Uri IdUri(int id) => new($"{_documents}{id}/", Relative);
 
@@ -56,6 +69,15 @@ internal static class Routes
 		internal static Uri PagedUri(int pageSize) => new($"{_documents}?{_pageSize}={pageSize}", Relative);
 	}
 
+	internal static class StoragePaths
+	{
+		internal static readonly Uri Uri = new(_storagepaths, Relative);
+
+		internal static Uri IdUri(int id) => new($"{_storagepaths}{id}/", Relative);
+
+		internal static Uri PagedUri(int pageSize) => new($"{_storagepaths}?{_pageSize}={pageSize}", Relative);
+	}
+	
 	internal static class Tags
 	{
 		internal static readonly Uri Uri = new(_tags, Relative);
