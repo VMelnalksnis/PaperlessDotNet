@@ -1,4 +1,4 @@
-﻿// Copyright 2022 Valters Melnalksnis
+// Copyright 2022 Valters Melnalksnis
 // Licensed under the Apache License 2.0.
 // See LICENSE file in the project root for full license information.
 
@@ -65,5 +65,40 @@ public sealed class CorrespondentClientTests(PaperlessFixture paperlessFixture) 
 		{
 			await Client.Correspondents.Delete(correspondent.Id);
 		}
+	}
+
+	[Test]
+	public async Task Update_ShouldUpdateCorrespondent()
+	{
+		var creation = new CorrespondentCreation("Original Company")
+		{
+			Match = "original",
+			MatchingAlgorithm = MatchingAlgorithm.ExactMatch,
+			IsInsensitive = false,
+		};
+
+		var correspondent = await Client.Correspondents.Create(creation);
+
+		var update = new CorrespondentUpdate
+		{
+			Name = "Updated Company",
+			Match = "updated",
+			IsInsensitive = true,
+		};
+
+		var updatedCorrespondent = await Client.Correspondents.Update(correspondent.Id, update);
+
+		using (new AssertionScope())
+		{
+			updatedCorrespondent.Id.Should().Be(correspondent.Id);
+			updatedCorrespondent.Name.Should().Be("Updated Company");
+			updatedCorrespondent.MatchingPattern.Should().Be("updated");
+			updatedCorrespondent.IsInsensitive.Should().BeTrue();
+		}
+
+		var fetched = (await Client.Correspondents.Get(correspondent.Id))!;
+		fetched.Should().BeEquivalentTo(updatedCorrespondent);
+
+		await Client.Correspondents.Delete(correspondent.Id);
 	}
 }

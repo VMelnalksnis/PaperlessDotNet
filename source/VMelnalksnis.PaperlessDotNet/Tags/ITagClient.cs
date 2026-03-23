@@ -1,4 +1,4 @@
-﻿// Copyright 2022 Valters Melnalksnis
+// Copyright 2022 Valters Melnalksnis
 // Licensed under the Apache License 2.0.
 // See LICENSE file in the project root for full license information.
 
@@ -32,6 +32,13 @@ public interface ITagClient
 	/// <param name="tag">The tag to create.</param>
 	/// <returns>The created tag.</returns>
 	Task<Tag> Create(TagCreation tag);
+
+	/// <summary>Updates an existing tag.</summary>
+	/// <param name="id">The id of the tag to update.</param>
+	/// <param name="update">The update to apply.</param>
+	/// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+	/// <returns>The updated tag.</returns>
+	Task<Tag> Update(int id, TagUpdate update, CancellationToken cancellationToken = default);
 
 	/// <summary>Deletes a tag.</summary>
 	/// <param name="id">The id of the tag to delete.</param>

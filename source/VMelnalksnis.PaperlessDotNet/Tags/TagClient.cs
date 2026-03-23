@@ -1,4 +1,4 @@
-﻿// Copyright 2022 Valters Melnalksnis
+// Copyright 2022 Valters Melnalksnis
 // Licensed under the Apache License 2.0.
 // See LICENSE file in the project root for full license information.
 
@@ -58,6 +58,18 @@ public sealed class TagClient : ITagClient
 			tag,
 			_options.GetTypeInfo<TagCreation>(),
 			_options.GetTypeInfo<Tag>());
+	}
+
+	/// <inheritdoc />
+	public async Task<Tag> Update(int id, TagUpdate update, CancellationToken cancellationToken = default)
+	{
+		using var response = await _httpClient
+			.PatchAsJsonAsync(Routes.Tags.IdUri(id), update, _options.GetTypeInfo<TagUpdate>())
+			.ConfigureAwait(false);
+
+		await response.EnsureSuccessStatusCodeAsync().ConfigureAwait(false);
+
+		return (await response.Content.ReadFromJsonAsync(_options.GetTypeInfo<Tag>(), cancellationToken).ConfigureAwait(false))!;
 	}
 
 	/// <inheritdoc />

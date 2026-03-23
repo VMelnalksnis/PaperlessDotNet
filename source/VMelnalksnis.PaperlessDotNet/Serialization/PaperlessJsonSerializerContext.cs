@@ -1,4 +1,4 @@
-﻿// Copyright 2022 Valters Melnalksnis
+// Copyright 2022 Valters Melnalksnis
 // Licensed under the Apache License 2.0.
 // See LICENSE file in the project root for full license information.
 
@@ -19,6 +19,7 @@ namespace VMelnalksnis.PaperlessDotNet.Serialization;
 [JsonSerializable(typeof(PaginatedList<Correspondent>))]
 [JsonSerializable(typeof(Correspondent))]
 [JsonSerializable(typeof(CorrespondentCreation))]
+[JsonSerializable(typeof(CorrespondentUpdate))]
 [JsonSerializable(typeof(PaginatedList<Document>))]
 [JsonSerializable(typeof(Document))]
 [JsonSerializable(typeof(List<PaperlessTask>))]
@@ -30,6 +31,7 @@ namespace VMelnalksnis.PaperlessDotNet.Serialization;
 [JsonSerializable(typeof(PaginatedList<CustomField>))]
 [JsonSerializable(typeof(PaginatedList<Tag>))]
 [JsonSerializable(typeof(TagCreation))]
+[JsonSerializable(typeof(TagUpdate))]
 [JsonSerializable(typeof(DocumentMetadata))]
 [JsonSerializable(typeof(PaginatedList<DocumentType>))]
 [JsonSerializable(typeof(DocumentTypeCreation))]

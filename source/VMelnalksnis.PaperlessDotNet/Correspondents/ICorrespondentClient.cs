@@ -1,4 +1,4 @@
-﻿// Copyright 2022 Valters Melnalksnis
+// Copyright 2022 Valters Melnalksnis
 // Licensed under the Apache License 2.0.
 // See LICENSE file in the project root for full license information.
 
@@ -32,6 +32,13 @@ public interface ICorrespondentClient
 	/// <param name="correspondent">The correspondent to create.</param>
 	/// <returns>The created correspondent.</returns>
 	Task<Correspondent> Create(CorrespondentCreation correspondent);
+
+	/// <summary>Updates an existing correspondent.</summary>
+	/// <param name="id">The id of the correspondent to update.</param>
+	/// <param name="update">The update to apply.</param>
+	/// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+	/// <returns>The updated correspondent.</returns>
+	Task<Correspondent> Update(int id, CorrespondentUpdate update, CancellationToken cancellationToken = default);
 
 	/// <summary>Deletes a correspondent.</summary>
 	/// <param name="id">The id of the correspondent to delete.</param>

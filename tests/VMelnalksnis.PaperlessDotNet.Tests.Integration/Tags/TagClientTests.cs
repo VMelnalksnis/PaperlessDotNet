@@ -1,4 +1,4 @@
-﻿// Copyright 2022 Valters Melnalksnis
+// Copyright 2022 Valters Melnalksnis
 // Licensed under the Apache License 2.0.
 // See LICENSE file in the project root for full license information.
 
@@ -48,6 +48,38 @@ public sealed class TagClientTests(PaperlessFixture paperlessFixture) : Paperles
 		tags = await Client.Tags.GetAll().ToListAsync();
 
 		tags.Should().NotContainEquivalentOf(createdTag);
+	}
+
+	[Test]
+	public async Task Update_ShouldUpdateTag()
+	{
+		var createdTag = await Client.Tags.Create(new("Original Name")
+		{
+			Match = "original",
+			MatchingAlgorithm = MatchingAlgorithm.ExactMatch,
+		});
+
+		var update = new TagUpdate
+		{
+			Name = "Updated Name",
+			Match = "updated",
+			Color = "#00ff00",
+		};
+
+		var updatedTag = await Client.Tags.Update(createdTag.Id, update);
+
+		using (new AssertionScope())
+		{
+			updatedTag.Id.Should().Be(createdTag.Id);
+			updatedTag.Name.Should().Be("Updated Name");
+			updatedTag.Slug.Should().Be("updated-name");
+			updatedTag.Match.Should().Be("updated");
+		}
+
+		var tag = (await Client.Tags.Get(createdTag.Id))!;
+		tag.Should().BeEquivalentTo(updatedTag, ExcludingDocumentCount);
+
+		await Client.Tags.Delete(createdTag.Id);
 	}
 
 	private static EquivalencyAssertionOptions<Tag> ExcludingDocumentCount(EquivalencyAssertionOptions<Tag> options)
