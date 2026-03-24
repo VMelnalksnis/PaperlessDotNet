@@ -1,6 +1,8 @@
-﻿// Copyright 2022 Valters Melnalksnis
+// Copyright 2022 Valters Melnalksnis
 // Licensed under the Apache License 2.0.
 // See LICENSE file in the project root for full license information.
+
+using System.Text.Json.Serialization;
 
 using NodaTime;
 
@@ -19,6 +21,7 @@ public sealed class Correspondent
 	public string Name { get; set; } = null!;
 
 	/// <summary>Gets or sets the pattern by which to match the correspondent to documents.</summary>
+	[JsonPropertyName("match")]
 	public string MatchingPattern { get; set; } = null!;
 
 	/// <summary>Gets or sets the id of the matching algorithm used to match the correspondent to documents.</summary>
