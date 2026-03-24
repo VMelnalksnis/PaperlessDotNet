@@ -1,4 +1,4 @@
-﻿// Copyright 2022 Valters Melnalksnis
+// Copyright 2022 Valters Melnalksnis
 // Licensed under the Apache License 2.0.
 // See LICENSE file in the project root for full license information.
 
@@ -88,6 +88,22 @@ internal static class HttpClientExtensions
 #else
 		return httpClient.PatchAsync(requestUri, content);
 #endif
+	}
+
+	internal static async Task<TResponse> PatchAsJsonAsync<TRequest, TResponse>(
+		this HttpClient httpClient,
+		Uri requestUri,
+		TRequest request,
+		JsonTypeInfo<TRequest> requestTypeInfo,
+		JsonTypeInfo<TResponse> responseTypeInfo,
+		CancellationToken cancellationToken = default)
+	{
+		using var response = await httpClient
+			.PatchAsJsonAsync(requestUri, request, requestTypeInfo)
+			.ConfigureAwait(false);
+
+		await response.EnsureSuccessStatusCodeAsync().ConfigureAwait(false);
+		return (await response.Content.ReadFromJsonAsync(responseTypeInfo, cancellationToken).ConfigureAwait(false))!;
 	}
 
 	internal static async Task EnsureSuccessStatusCodeAsync(this HttpResponseMessage response)

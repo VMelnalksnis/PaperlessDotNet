@@ -61,15 +61,14 @@ public sealed class TagClient : ITagClient
 	}
 
 	/// <inheritdoc />
-	public async Task<Tag> Update(int id, TagUpdate update, CancellationToken cancellationToken = default)
+	public Task<Tag> Update(int id, TagUpdate update, CancellationToken cancellationToken = default)
 	{
-		using var response = await _httpClient
-			.PatchAsJsonAsync(Routes.Tags.IdUri(id), update, _options.GetTypeInfo<TagUpdate>())
-			.ConfigureAwait(false);
-
-		await response.EnsureSuccessStatusCodeAsync().ConfigureAwait(false);
-
-		return (await response.Content.ReadFromJsonAsync(_options.GetTypeInfo<Tag>(), cancellationToken).ConfigureAwait(false))!;
+		return _httpClient.PatchAsJsonAsync(
+			Routes.Tags.IdUri(id),
+			update,
+			_options.GetTypeInfo<TagUpdate>(),
+			_options.GetTypeInfo<Tag>(),
+			cancellationToken);
 	}
 
 	/// <inheritdoc />

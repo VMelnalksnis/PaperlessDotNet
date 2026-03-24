@@ -61,15 +61,14 @@ public sealed class CorrespondentClient : ICorrespondentClient
 	}
 
 	/// <inheritdoc />
-	public async Task<Correspondent> Update(int id, CorrespondentUpdate update, CancellationToken cancellationToken = default)
+	public Task<Correspondent> Update(int id, CorrespondentUpdate update, CancellationToken cancellationToken = default)
 	{
-		using var response = await _httpClient
-			.PatchAsJsonAsync(Routes.Correspondents.IdUri(id), update, _options.GetTypeInfo<CorrespondentUpdate>())
-			.ConfigureAwait(false);
-
-		await response.EnsureSuccessStatusCodeAsync().ConfigureAwait(false);
-
-		return (await response.Content.ReadFromJsonAsync(_options.GetTypeInfo<Correspondent>(), cancellationToken).ConfigureAwait(false))!;
+		return _httpClient.PatchAsJsonAsync(
+			Routes.Correspondents.IdUri(id),
+			update,
+			_options.GetTypeInfo<CorrespondentUpdate>(),
+			_options.GetTypeInfo<Correspondent>(),
+			cancellationToken);
 	}
 
 	/// <inheritdoc />

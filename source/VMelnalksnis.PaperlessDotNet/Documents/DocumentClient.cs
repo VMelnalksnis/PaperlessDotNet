@@ -1,4 +1,4 @@
-﻿// Copyright 2022 Valters Melnalksnis
+// Copyright 2022 Valters Melnalksnis
 // Licensed under the Apache License 2.0.
 // See LICENSE file in the project root for full license information.
 
@@ -319,17 +319,15 @@ public sealed class DocumentClient : IDocumentClient
 			cancellationToken);
 	}
 
-	private async Task<TDocument> UpdateCore<TDocument, TUpdate>(int id, TUpdate update)
+	private Task<TDocument> UpdateCore<TDocument, TUpdate>(int id, TUpdate update)
 		where TDocument : Document
 		where TUpdate : DocumentUpdate
 	{
-		using var response = await _httpClient
-			.PatchAsJsonAsync(Routes.Documents.IdUri(id), update, _options.GetTypeInfo<TUpdate>())
-			.ConfigureAwait(false);
-
-		await response.EnsureSuccessStatusCodeAsync().ConfigureAwait(false);
-
-		return (await response.Content.ReadFromJsonAsync(_options.GetTypeInfo<TDocument>()).ConfigureAwait(false))!;
+		return _httpClient.PatchAsJsonAsync(
+			Routes.Documents.IdUri(id),
+			update,
+			_options.GetTypeInfo<TUpdate>(),
+			_options.GetTypeInfo<TDocument>());
 	}
 
 	private async Task<DocumentContent> DownloadContentCore(Uri requestUri, CancellationToken cancellationToken = default)
