@@ -2,7 +2,7 @@ name: NuGet vulnerabilities
 
 on:
   schedule:
-    - cron: "0 0 * * 1-5"
+    - cron: "0 0 * * MON"
 
   push:
     branches: [ master ]
@@ -25,8 +25,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v5.0.0
-      - uses: actions/setup-dotnet@v5.0.0
+      - uses: actions/checkout@v6.0.2
+      - uses: actions/setup-dotnet@v5.2.0
       - run: dotnet restore
 
       - name: Check vulnerable packages
