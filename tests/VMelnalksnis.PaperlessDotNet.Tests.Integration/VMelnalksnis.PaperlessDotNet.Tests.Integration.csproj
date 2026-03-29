@@ -18,9 +18,12 @@
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="NUnit3TestAdapter"/>
-		<PackageReference Include="System.Linq.Async"/>
 		<PackageReference Include="Testcontainers.Redis"/>
 		<PackageReference Include="VMelnalksnis.Testcontainers.Paperless"/>
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(TargetFramework)' != 'net10.0'">
+		<PackageReference Include="System.Linq.Async"/>
 	</ItemGroup>
 
 	<ItemGroup>

@@ -38,9 +38,9 @@ public sealed class FilterExpressionTestCases : TheoryData<
 
 		Add(filter => filter.Correspondent!.Name.Contains("foo"), null, "correspondent__name__icontains=foo");
 		Add(filter => filter.Correspondent!.Name == "foo", null, "correspondent__name__iexact=foo");
-		Add(filter => _ids.Contains(filter.Correspondent!.Id), null, "correspondent__id__in=5,23");
+		Add(filter => _ids.AsEnumerable().Contains(filter.Correspondent!.Id), null, "correspondent__id__in=5,23");
 		Add(filter => new List<int> { 1 }.Contains(filter.Correspondent!.Id), null, "correspondent__id__in=1");
-		Add(filter => new[] { 1, 2 }.Contains(filter.Correspondent!.Id), null, "correspondent__id__in=1,2");
+		Add(filter => new[] { 1, 2 }.AsEnumerable().Contains(filter.Correspondent!.Id), null, "correspondent__id__in=1,2");
 
 		Add(filter => filter.Added.Date <= date, null, "added__date__lte=2025-04-23");
 		Add(filter => filter.Added <= date, null, "added__lte=2025-04-23T12%3A23%3A45");

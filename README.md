@@ -17,7 +17,7 @@ and [IServiceCollection](https://docs.microsoft.com/en-us/dotnet/api/microsoft.e
 For use outside of ASP.NET Core, see the
 [example in tests](tests/VMelnalksnis.PaperlessDotNet.Tests.Integration/MinimalExampleTests.cs).
 
-1. Add configuration (see [options](source/VMelnalksnis.PaperlessDotNet.DependencyInjection/PaperlessOptions.cs))
+1. Add configuration (see [options](source/VMelnalksnis.PaperlessDotNet/PaperlessOptions.cs))
    ```yaml
    "Paperless": {
        "BaseAddress": "",
@@ -38,7 +38,7 @@ For use outside of ASP.NET Core, see the
 ## Filtering
 Some objects, such as documents, support filtering on various fields.
 The filter format slightly differs from the object itself, and can be seen in a respective `Filter` object;
-for  example [DocumentFilter](source/VMelnalksnis.PaperlessDotNet/Filters/DocumentFilter.cs) for documents.
+for  example [DocumentFilter](source/VMelnalksnis.PaperlessDotNet/Documents/DocumentFilter.cs) for documents.
 Filters can be written inline as expressions:
 ```csharp
 var filteredDocuments = await Client.Documents.Get(

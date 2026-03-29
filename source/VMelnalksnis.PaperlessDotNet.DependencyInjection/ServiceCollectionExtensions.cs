@@ -3,7 +3,6 @@
 // See LICENSE file in the project root for full license information.
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -39,19 +38,14 @@ public static class ServiceCollectionExtensions
 	/// <param name="serviceCollection">The service collection in which to register the services.</param>
 	/// <param name="config">A delegate that is used to configure <see cref="PaperlessJsonSerializerOptions"/>.</param>
 	/// <returns>The <see cref="IHttpClientBuilder"/> for the <see cref="HttpClient"/> used by <see cref="IPaperlessClient"/>.</returns>
-#if NETSTANDARD2_0
-	[SuppressMessage("Trimming", "IL2026", Justification = $"{nameof(PaperlessOptions)} contains only system types.")]
-#else
-	[UnconditionalSuppressMessage("ReflectionAnalysis", "IL2026", Justification = $"{nameof(PaperlessOptions)} contains only system types.")]
-#endif
 	public static IHttpClientBuilder AddPaperlessDotNet(
 		this IServiceCollection serviceCollection,
 		Action<PaperlessJsonSerializerOptions>? config = null)
 	{
 		serviceCollection
+			.AddSingleton<IValidateOptions<PaperlessOptions>, PaperlessOptionsValidator>()
 			.AddOptions<PaperlessOptions>()
-			.BindConfiguration(PaperlessOptions.Name)
-			.ValidateDataAnnotations();
+			.BindConfiguration(PaperlessOptions.Name);
 
 		return serviceCollection.AddClient(config);
 	}
@@ -61,20 +55,15 @@ public static class ServiceCollectionExtensions
 	/// <param name="configuration">The configuration to which to bind options models.</param>
 	/// <param name="config">A delegate that is used to configure <see cref="PaperlessJsonSerializerOptions"/>.</param>
 	/// <returns>The <see cref="IHttpClientBuilder"/> for the <see cref="HttpClient"/> used by <see cref="IPaperlessClient"/>.</returns>
-#if NETSTANDARD2_0
-	[SuppressMessage("Trimming", "IL2026", Justification = $"{nameof(PaperlessOptions)} contains only system types.")]
-#else
-	[UnconditionalSuppressMessage("ReflectionAnalysis", "IL2026", Justification = $"{nameof(PaperlessOptions)} contains only system types.")]
-#endif
 	public static IHttpClientBuilder AddPaperlessDotNet(
 		this IServiceCollection serviceCollection,
 		IConfiguration configuration,
 		Action<PaperlessJsonSerializerOptions>? config = null)
 	{
 		serviceCollection
+			.AddSingleton<IValidateOptions<PaperlessOptions>, PaperlessOptionsValidator>()
 			.AddOptions<PaperlessOptions>()
-			.Bind(configuration.GetSection(PaperlessOptions.Name))
-			.ValidateDataAnnotations();
+			.Bind(configuration.GetSection(PaperlessOptions.Name));
 
 		return serviceCollection.AddClient(config);
 	}

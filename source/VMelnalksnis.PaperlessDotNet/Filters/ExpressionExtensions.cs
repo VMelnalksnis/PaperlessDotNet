@@ -12,6 +12,8 @@ using System.Runtime.Serialization;
 using System.Text.Encodings.Web;
 using System.Text.Json.Serialization;
 
+using NodaTime;
+
 using VMelnalksnis.PaperlessDotNet.Documents;
 using VMelnalksnis.PaperlessDotNet.DocumentTypes;
 
@@ -94,40 +96,43 @@ public static class ExpressionExtensions
 	{
 		if (expression is BinaryExpression binaryExpression)
 		{
-			var suffix = binaryExpression.GetSuffix();
-
 			if (binaryExpression.Left is MemberExpression memberExpression)
 			{
-				var value = binaryExpression.Right.Evaluate();
-				if (value is bool boolValue)
-				{
-					value = binaryExpression.NodeType is NotEqual
-						? !boolValue
-						: boolValue;
-				}
-				else if (value is null)
-				{
-					value = binaryExpression.NodeType is Equal;
-				}
-
 				var memberName = memberExpression.GetFilterMemberName();
 
+				var suffix = binaryExpression.GetSuffix();
 				if (suffix is not null)
 				{
 					memberName += $"__{suffix}";
 				}
 
-				return new(
-					memberName,
-					value switch
-					{
-						DateTime dateTime when memberName.Contains("__date") => dateTime.ToString(
-							"yyyy-MM-dd",
-							CultureInfo.InvariantCulture),
-						DateTime dateTime => dateTime.ToString("yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture),
-						bool boolean => boolean.ToString().ToLowerInvariant(),
-						_ => value.ToString() ?? string.Empty,
-					});
+				if (binaryExpression.Right.Type == typeof(bool))
+				{
+					var booleanValue = binaryExpression.Right.Evaluate<bool>();
+					booleanValue = binaryExpression.NodeType is NotEqual
+						? !booleanValue
+						: booleanValue;
+
+					return new(memberName, booleanValue ? "true" : "false");
+				}
+
+				if (binaryExpression.Right.Type == typeof(DateTime))
+				{
+					var dateValue = binaryExpression.Right.Evaluate<DateTime>();
+					var dateString = memberName.Contains("__date")
+						? dateValue.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)
+						: dateValue.ToString("yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture);
+
+					return new(memberName, dateString);
+				}
+
+				var value = binaryExpression.Right.Evaluate();
+				if (value is null)
+				{
+					return new(memberName, binaryExpression.NodeType is Equal ? "true" : "false");
+				}
+
+				return new(memberName, value.ToString() ?? string.Empty);
 			}
 		}
 
@@ -144,7 +149,8 @@ public static class ExpressionExtensions
 					_ => throw new NotImplementedException(),
 				};
 
-				var value = valueExpression.Evaluate() ?? throw new NotSupportedException("Method calls with null arguments are not supported");
+				var value = valueExpression.Evaluate() ??
+					throw new NotSupportedException("Method calls with null arguments are not supported");
 				if (value is IEnumerable<int> values)
 				{
 					suffix = "in";
@@ -158,7 +164,8 @@ public static class ExpressionExtensions
 			}
 			else
 			{
-				var value = methodCallExpression.Arguments[0].Evaluate() ?? throw new InvalidOperationException("Extension method calls on null instances are not supported");
+				var value = methodCallExpression.Arguments[0].Evaluate() ??
+					throw new InvalidOperationException("Extension method calls on null instances are not supported");
 				if (value is IEnumerable<int> values)
 				{
 					suffix = "in";
@@ -232,6 +239,116 @@ public static class ExpressionExtensions
 
 	private static object? Evaluate(this Expression expression)
 	{
-		return Expression.Lambda(expression).Compile().DynamicInvoke();
+		if (expression.Type == typeof(string))
+		{
+			return expression.Evaluate<string?>();
+		}
+
+		if (expression.Type == typeof(Uri))
+		{
+			return expression.Evaluate<Uri?>();
+		}
+
+		if (expression.Type == typeof(int))
+		{
+			return expression.Evaluate<int>();
+		}
+
+		if (expression.Type == typeof(int?))
+		{
+			return expression.Evaluate<int?>();
+		}
+
+		if (expression.Type == typeof(uint))
+		{
+			return expression.Evaluate<uint>();
+		}
+
+		if (expression.Type == typeof(uint?))
+		{
+			return expression.Evaluate<uint?>();
+		}
+
+		if (expression.Type == typeof(float))
+		{
+			return expression.Evaluate<float>();
+		}
+
+		if (expression.Type == typeof(float?))
+		{
+			return expression.Evaluate<float?>();
+		}
+
+		if (expression.Type == typeof(double))
+		{
+			return expression.Evaluate<double>();
+		}
+
+		if (expression.Type == typeof(double?))
+		{
+			return expression.Evaluate<double?>();
+		}
+
+		if (expression.Type == typeof(decimal))
+		{
+			return expression.Evaluate<decimal>();
+		}
+
+		if (expression.Type == typeof(decimal?))
+		{
+			return expression.Evaluate<decimal?>();
+		}
+
+		if (expression.Type == typeof(bool))
+		{
+			return expression.Evaluate<bool>();
+		}
+
+		if (expression.Type == typeof(bool?))
+		{
+			return expression.Evaluate<bool?>();
+		}
+
+		if (expression.Type == typeof(DateTime))
+		{
+			return expression.Evaluate<DateTime>();
+		}
+
+		if (expression.Type == typeof(DateTime?))
+		{
+			return expression.Evaluate<DateTime?>();
+		}
+
+		if (expression.Type == typeof(OffsetDate))
+		{
+			return expression.Evaluate<OffsetDate>();
+		}
+
+		if (expression.Type == typeof(OffsetDate?))
+		{
+			return expression.Evaluate<OffsetDate?>();
+		}
+
+		if (expression.Type == typeof(LocalDate))
+		{
+			return expression.Evaluate<LocalDate>();
+		}
+
+		if (expression.Type == typeof(LocalDate?))
+		{
+			return expression.Evaluate<LocalDate?>();
+		}
+
+		if (typeof(IEnumerable<int>).IsAssignableFrom(expression.Type))
+		{
+			return expression.Evaluate<IEnumerable<int>>();
+		}
+
+		throw new ArgumentOutOfRangeException(nameof(expression.Type), expression.Type, "Unsupported expression type");
+	}
+
+	private static TValue Evaluate<TValue>(this Expression expression)
+	{
+		return Expression.Lambda<Func<TValue>>(expression).Compile().Invoke();
 	}
 }

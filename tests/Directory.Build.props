@@ -3,7 +3,7 @@
 	<Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))"/>
 
 	<PropertyGroup>
-		<TargetFrameworks>net6.0;net8.0;net9.0</TargetFrameworks>
+		<TargetFrameworks>net8.0;net9.0;net10.0</TargetFrameworks>
 		<IsPackable>false</IsPackable>
 		<IsTrimmable>false</IsTrimmable>
 		<EnableTrimAnalyzer>false</EnableTrimAnalyzer>
@@ -23,8 +23,6 @@
 		<PackageReference Include="JunitXml.TestLogger"/>
 		<PackageReference Include="Microsoft.NET.Test.Sdk"/>
 		<PackageReference Include="Newtonsoft.Json"/>
-		<PackageReference Include="System.Net.Http"/>
-		<PackageReference Include="System.Text.RegularExpressions"/>
 	</ItemGroup>
 
 	<ItemGroup>
